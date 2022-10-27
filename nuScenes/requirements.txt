@@ -1,0 +1,12 @@
+matplotlib
+motmetrics
+torch
+numba
+numpy
+numpyencoder
+nuscenes_devkit
+opencv_python
+pyquaternion
+scipy
+Shapely
+tqdm
