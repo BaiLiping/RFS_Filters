@@ -19,7 +19,7 @@ Reverse indexing ...
 Done reverse indexing in 6.9 seconds.
 ======
 Initializing nuScenes tracking evaluation
-Loaded results from /home/zhubinglab/Desktop/val_submission.json. Found detections for 6019 samples.
+Loaded results from /home/blp/Desktop/val_submission.json. Found detections for 6019 samples.
 Loading annotations for val split from nuScenes version: v1.0-trainval
 Loaded ground truth annotations for 6019 samples.
 Filtering tracks
@@ -728,7 +728,7 @@ thr_0.5910	0.938	0.120	0.295	0.138	3570	9650	1235	8322	93	1404	1235	76	93
 thr_0.6100	0.934	0.096	0.310	0.111	3570	9650	994	8576	80	1140	994	66	80
 
 Calculating metrics...
-Saving metrics to: /home/zhubinglab/Desktop/evaluate/nuscenes-metrics_trainval
+Saving metrics to: /home/blp/Desktop/evaluate/nuscenes-metrics_trainval
 
 ### Final results ###
 

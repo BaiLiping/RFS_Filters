@@ -236,16 +236,16 @@ if __name__ == "__main__":
     # Settings.
     parser = argparse.ArgumentParser(description='Evaluate nuScenes tracking results.',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--result_path', default='/home/zhubinglab/Desktop/Radar_Perception_Project/Project_5/evaluate/mini_submission.json',type=str, help='The submission as a JSON file.')
-    parser.add_argument('--output_dir', type=str, default='/home/zhubinglab/Desktop/Radar_Perception_Project/Project_5/evaluate/nuscenes-metrics',
+    parser.add_argument('--result_path', default='/home/blp/Desktop/Radar_Perception_Project/Project_5/evaluate/mini_submission.json',type=str, help='The submission as a JSON file.')
+    parser.add_argument('--output_dir', type=str, default='/home/blp/Desktop/Radar_Perception_Project/Project_5/evaluate/nuscenes-metrics',
                         help='Folder to store result metrics, graphs and example visualizations.')
     parser.add_argument('--eval_set', type=str, default='mini_val',
                         help='Which dataset split to evaluate on, train, val or test or mini_val.')
-    parser.add_argument('--dataroot', type=str, default='/home/zhubinglab/Desktop/mmdetection3d/data/nuscenes_mini',
+    parser.add_argument('--dataroot', type=str, default='/home/blp/Desktop/mmdetection3d/data/nuscenes_mini',
                         help='Default nuScenes data directory.')
     parser.add_argument('--version', type=str, default='v1.0-mini',
                         help='Which version of the nuScenes dataset to evaluate on, e.g. v1.0-trainval.')
-    parser.add_argument('--config_path', type=str,default='/home/zhubinglab/Desktop/Radar_Perception_Project/Project_5/evaluate/tracking_config.json',
+    parser.add_argument('--config_path', type=str,default='/home/blp/Desktop/Radar_Perception_Project/Project_5/evaluate/tracking_config.json',
                         help='Path to the configuration file.'
                              'If no path given, the NIPS 2019 configuration will be used.')
     parser.add_argument('--render_curves', type=int, default=1,

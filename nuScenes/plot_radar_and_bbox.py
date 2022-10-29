@@ -92,7 +92,7 @@ def visualize_radar_and_bbox(Z_k,radar_points_of_this_frame,sensor_calibration_d
     ax.set_xlim(-60, 60)
     ax.set_ylim(-60, 60)
  
-    plt.savefig('/home/zhubinglab/Desktop/radar/{}_{}.png'.format(classification, frame_idx), bbox_inches='tight', pad_inches=0, dpi=200)
+    plt.savefig('/home/blp/Desktop/radar/{}_{}.png'.format(classification, frame_idx), bbox_inches='tight', pad_inches=0, dpi=200)
 
 def points_in_box(box: 'Box', points: np.ndarray, wlh_factor: float = 1.0):
     """

@@ -64,12 +64,12 @@ classifications = ['bicycle','motorcycle',  'trailer', 'truck','bus','pedestrian
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_version', default='v1.0-trainval', help='choose dataset version between [v1.0-trainval][v1.0-test][v1.0-mini]')
-    parser.add_argument('--detection_file',default='/home/zhubinglab/Desktop/training_results.json', help='directory for the inference file')
-    parser.add_argument('--programme_file', default='/home/zhubinglab/Desktop/nuScenes_Tracker')
-    parser.add_argument('--dataset_file', default='/home/zhubinglab/Desktop/mmdetection3d/data/nuscenes')
+    parser.add_argument('--detection_file',default='/home/blp/Desktop/training_results.json', help='directory for the inference file')
+    parser.add_argument('--programme_file', default='/home/blp/Desktop/MOT')
+    parser.add_argument('--dataset_file', default='/home/blp/Desktop/mmdetection3d/data/nuscenes')
     parser.add_argument('--parallel_process', default=8)
     parser.add_argument('--render_classes', default='')
-    parser.add_argument('--result_file', default='/home/zhubinglab/Desktop')
+    parser.add_argument('--result_file', default='/home/blp/Desktop')
     parser.add_argument('--render_curves', default=False)
     parser.add_argument('--config_path',default='')
     parser.add_argument('--verbose',default=True)
@@ -251,7 +251,7 @@ def main(token, out_file_directory_for_this_experiment):
         ax.set_title(classification)
         ax.set(ylabel='Number of Tracks')
     axes[-1].set(xlabel='Euclidean Distance to Ego', ylabel='Number of Tracks')
-    plt.savefig('/home/zhubinglab/Desktop/val_distribution.png')
+    plt.savefig('/home/blp/Desktop/val_distribution.png')
     plt.close()
 
     fig, axes=plt.subplots(7, figsize=(16, 25))
@@ -262,15 +262,15 @@ def main(token, out_file_directory_for_this_experiment):
         ax.set_title(classification)
         ax.set(ylabel='Number of Tracks')
     axes[-1].set(xlabel='Euclidean Distance to Ego', ylabel='Number of Tracks')
-    plt.savefig('/home/zhubinglab/Desktop/val_terminal_distribution.png')
+    plt.savefig('/home/blp/Desktop/val_terminal_distribution.png')
     plt.close()
 
     
-    with open('/home/zhubinglab/Desktop/train_gt_track_record.json', 'w') as f:
+    with open('/home/blp/Desktop/train_gt_track_record.json', 'w') as f:
         json.dump(track_record, f, cls=NumpyEncoder)
-    with open('/home/zhubinglab/Desktop/close_track_record.json', 'w') as f:
+    with open('/home/blp/Desktop/close_track_record.json', 'w') as f:
         json.dump(close_tracks_record, f, cls=NumpyEncoder)
-    with open('/home/zhubinglab/Desktop/close_terminal_track_record.json', 'w') as f:
+    with open('/home/blp/Desktop/close_terminal_track_record.json', 'w') as f:
         json.dump(close_terminal_tracks_record, f, cls=NumpyEncoder)
 
     

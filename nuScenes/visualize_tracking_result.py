@@ -52,12 +52,12 @@ classifications = ['bicycle','motorcycle',  'trailer', 'truck','bus','pedestrian
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_version', default='v1.0-trainval', help='choose dataset version between [v1.0-trainval][v1.0-test][v1.0-mini]')
-    parser.add_argument('--detection_file',default='/home/zhubinglab/Desktop/radar_without_duplication_val_submission.json', help='directory for the inference file')
-    parser.add_argument('--programme_file', default='/home/zhubinglab/Desktop/nuScenes_Tracker')
-    parser.add_argument('--dataset_file', default='/home/zhubinglab/Desktop/mmdetection3d/data/nuscenes')
+    parser.add_argument('--detection_file',default='/home/blp/Desktop/radar_without_duplication_val_submission.json', help='directory for the inference file')
+    parser.add_argument('--programme_file', default='/home/blp/Desktop/MOT')
+    parser.add_argument('--dataset_file', default='/home/blp/Desktop/mmdetection3d/data/nuscenes')
     parser.add_argument('--parallel_process', default=8)
     parser.add_argument('--render_classes', default='')
-    parser.add_argument('--result_file', default='/home/zhubinglab/Desktop')
+    parser.add_argument('--result_file', default='/home/blp/Desktop')
     parser.add_argument('--render_curves', default=False)
     parser.add_argument('--config_path',default='')
     parser.add_argument('--verbose',default=True)
@@ -67,7 +67,7 @@ def parse_args():
     return args
 
 def gen_track_record(inference_file, dataset_version):
-    dataset_info_file='/home/zhubinglab/Desktop/nuScenes_Tracker/configs/dataset_info.json'
+    dataset_info_file='/home/blp/Desktop/MOT/configs/dataset_info.json'
     
     if dataset_version =='v1.0-trainval':
         set_info='val'
@@ -287,7 +287,7 @@ def main(token, out_file_directory_for_this_experiment):
     with open(dataset_info_file, 'rb') as f:
         dataset_info=json.load(f)
 
-    with open('/home/zhubinglab/Desktop/centerpoint_val_submission.json', 'rb') as f:
+    with open('/home/blp/Desktop/centerpoint_val_submission.json', 'rb') as f:
         result_meta=json.load(f)
     tracking_result_all=result_meta['results']
     inference_track_record=gen_track_record(tracking_result_all, args.data_version)
@@ -298,7 +298,7 @@ def main(token, out_file_directory_for_this_experiment):
 
 
     # get ground track record
-    with open('/home/zhubinglab/Desktop/val_gt_track_record.json', 'rb') as f:
+    with open('/home/blp/Desktop/val_gt_track_record.json', 'rb') as f:
         gt_track_record=json.load(f)
 
 

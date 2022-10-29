@@ -25,12 +25,12 @@ all='bicycle+motorcycle+trailer+truck+bus+pedestrian+car'
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_version', default='v1.0-trainval', help='choose dataset version between [v1.0-trainval][v1.0-test][v1.0-mini]')
-    parser.add_argument('--detection_file',default='/home/zhubinglab/Desktop/train_set_fixed/training_results.json', help='directory for the inference file')
-    parser.add_argument('--programme_file', default='/home/zhubinglab/Desktop/nuScenes_Tracker')
-    parser.add_argument('--dataset_file', default='/home/zhubinglab/Desktop/mmdetection3d/data/nuscenes')
+    parser.add_argument('--detection_file',default='/home/blp/Desktop/train_set_fixed/training_results.json', help='directory for the inference file')
+    parser.add_argument('--programme_file', default='/home/blp/Desktop/MOT')
+    parser.add_argument('--dataset_file', default='/home/blp/Desktop/mmdetection3d/data/nuscenes')
     parser.add_argument('--parallel_process', default=8)
     parser.add_argument('--render_classes', default='')
-    parser.add_argument('--result_file', default='/home/zhubinglab/Desktop')
+    parser.add_argument('--result_file', default='/home/blp/Desktop')
     parser.add_argument('--render_curves', default='False')
     parser.add_argument('--config_path',default='')
     parser.add_argument('--verbose',default='True')
@@ -95,7 +95,7 @@ def main(classification,token, out_file_directory_for_this_experiment):
         # generate filter based on the filter model
         pmbm_filter = pmbmgnn_tracker.PMBMGNN_Filter(filter_model, classification)
         for frame_idx, frame_token in enumerate(ordered_frames):
-            with open('/home/zhubinglab/Desktop/training_set_fixed/{}.json'.format(frame_token), 'rb') as f:
+            with open('/home/blp/Desktop/training_set_fixed/{}.json'.format(frame_token), 'rb') as f:
                 estimated_bboxes_at_current_frame= json.load(f)
 
 
@@ -192,8 +192,8 @@ if __name__ == '__main__':
             scene_token = list(orderedframe.keys())[scene_idx]
             ordered_frames = orderedframe[scene_token]
             for frame_idx, frame_token in enumerate(ordered_frames):
-                if os.path.exists('/home/zhubinglab/Desktop/train_set_tracking_result/{}_{}.json'.format(frame_token, classification)):
-                    with open('/home/zhubinglab/Desktop/train_set_tracking_result/{}_{}.json'.format(frame_token, classification), 'r') as f:
+                if os.path.exists('/home/blp/Desktop/train_set_tracking_result/{}_{}.json'.format(frame_token, classification)):
+                    with open('/home/blp/Desktop/train_set_tracking_result/{}_{}.json'.format(frame_token, classification), 'r') as f:
                         results_all=json.load(f)
                     classification_submission['results'][frame_token]=results_all['results'][frame_token]
             
@@ -201,5 +201,5 @@ if __name__ == '__main__':
         for frame_token in result_of_this_class:
             for bbox_info in result_of_this_class[frame_token]:
                 submission['results'][frame_token].append(bbox_info)
-    with open('/home/zhubinglab/Desktop/train_set_tracking_result/val_submission.json', 'w') as f:
+    with open('/home/blp/Desktop/train_set_tracking_result/val_submission.json', 'w') as f:
         json.dump(submission, f, cls=NumpyEncoder)

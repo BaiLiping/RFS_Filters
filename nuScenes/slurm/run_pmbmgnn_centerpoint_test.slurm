@@ -4,9 +4,9 @@
 #SBATCH -p cpu-high
 #SBATCH -N 1
 #SBATCH -n 36
-#SBATCH --output=/home/zhubinglab/Desktop/nuScenes_Tracker/slurmoutfile/pmbmgnn_centerpoint_test.out
+#SBATCH --output=/home/blp/Desktop/MOT/slurmoutfile/pmbmgnn_centerpoint_test.out
 
 source activate zhubinglabenv
 
 
-python3 /home/zhubinglab/Desktop/nuScenes_Tracker/run_pmbmgnn_tracker.py --data_version='v1.0-test' --detection_file='/home/zhubinglab/Desktop/mmdetection3d/data/nuscenes/official_inference_result/centerpoint_test.json'
+python3 /home/blp/Desktop/MOT/run_pmbmgnn_tracker.py --data_version='v1.0-test' --detection_file='/home/blp/Desktop/mmdetection3d/data/nuscenes/official_inference_result/centerpoint_test.json'

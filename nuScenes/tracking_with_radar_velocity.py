@@ -27,12 +27,12 @@ classifications = ['bicycle','motorcycle',  'trailer', 'truck','bus','pedestrian
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_version', default='v1.0-trainval', help='choose dataset version between [v1.0-trainval][v1.0-test][v1.0-mini]')
-    parser.add_argument('--detection_file',default='/home/zhubinglab/Desktop/val_results_without_duplication.json', help='directory for the inference file')
-    parser.add_argument('--programme_file', default='/home/zhubinglab/Desktop/nuScenes_Tracker')
-    parser.add_argument('--dataset_file', default='/home/zhubinglab/Desktop/mmdetection3d/data/nuscenes')
+    parser.add_argument('--detection_file',default='/home/blp/Desktop/val_results_without_duplication.json', help='directory for the inference file')
+    parser.add_argument('--programme_file', default='/home/blp/Desktop/MOT')
+    parser.add_argument('--dataset_file', default='/home/blp/Desktop/mmdetection3d/data/nuscenes')
     parser.add_argument('--parallel_process', default=8)
     parser.add_argument('--render_classes', default='')
-    parser.add_argument('--result_file', default='/home/zhubinglab/Desktop')
+    parser.add_argument('--result_file', default='/home/blp/Desktop')
     parser.add_argument('--render_curves', default=False)
     parser.add_argument('--config_path',default='')
     parser.add_argument('--verbose',default=True)
@@ -67,7 +67,7 @@ def main(token, out_file_directory_for_this_experiment):
     with open(config, 'r') as f:
         parameters=json.load(f)
     # read ordered frame info
-    with open('/home/zhubinglab/Desktop/nuScenes_Tracker/configs/dataset_info.json', 'rb') as f:
+    with open('/home/blp/Desktop/MOT/configs/dataset_info.json', 'rb') as f:
         dataset_info=json.load(f)
 
     orderedframe=dataset_info[set_info]['ordered_frame_info']
@@ -91,7 +91,7 @@ def main(token, out_file_directory_for_this_experiment):
         scene_token = list(orderedframe.keys())[scene_idx]
 
         # read ordered frame info
-        with open('/home/zhubinglab/Desktop/nuScenes_Tracker/configs/dataset_info_with_radar_{}.json'.format(scene_token), 'rb') as f:
+        with open('/home/blp/Desktop/MOT/configs/dataset_info_with_radar_{}.json'.format(scene_token), 'rb') as f:
             dataset_info=json.load(f)
     
         # time stamp info
