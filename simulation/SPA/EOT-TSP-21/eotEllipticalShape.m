@@ -70,7 +70,7 @@ for step = 1:numSteps
     end
     
     currentExistences = cat(1,currentExistences,newExistences);
-      = repmat(currentExistences,[1,numMeasurements]);
+    currentExistencesExtrinsic = repmat(currentExistences,[1,numMeasurements]);
     
     currentParticlesKinematic = cat(3,currentParticlesKinematic,newParticlesKinematic);
     currentParticlesExtent = cat(4,currentParticlesExtent,newParticlesExtent);
