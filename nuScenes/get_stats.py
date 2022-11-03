@@ -25,9 +25,9 @@ classifications = ['bicycle','motorcycle',  'trailer', 'truck','bus','pedestrian
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_version', default='v1.0-trainval', help='choose dataset version between [v1.0-trainval][v1.0-test][v1.0-mini]')
-    parser.add_argument('--detection_file',default='/home/blp/Desktop/val_results_fixed.json', help='directory for the inference file')
-    parser.add_argument('--programme_file', default='/home/blp/Desktop/MOT')
-    parser.add_argument('--dataset_file', default='/home/blp/Desktop/mmdetection3d/data/nuscenes')
+    parser.add_argument('--detection_file',default='/home/bailiping/Desktop/val_results_fixed.json', help='directory for the inference file')
+    parser.add_argument('--programme_file', default='/home/bailiping/Desktop/MOT')
+    parser.add_argument('--dataset_file', default='/home/bailiping/Desktop/mmdetection3d/data/nuscenes')
     args = parser.parse_args()
     return args
 
@@ -125,11 +125,11 @@ def main():
                             correctedly_detected_ground_truth[classification_of_gt]['single_count_wrong_classification_record'][classifications_index[classification_of_gt]][classifications_index[z['detection_name']]]+=1
             '''
     # save the results without duplication
-    with open('/home/blp/Desktop/val_results_without_duplication.json', 'w') as f:
+    with open('/home/bailiping/Desktop/val_results_without_duplication.json', 'w') as f:
         json.dump(inference_without_duplication,f,cls=NumpyEncoder)
     
     ## save the stats
-    #with open('/home/blp/Desktop/training_statistics_hard_classifier.json', 'w') as f:
+    #with open('/home/bailiping/Desktop/training_statistics_hard_classifier.json', 'w') as f:
     #    json.dump(correctedly_detected_ground_truth, f, cls=NumpyEncoder)  
 
     '''

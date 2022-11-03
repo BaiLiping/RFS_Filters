@@ -25,12 +25,12 @@ classifications = ['bicycle','motorcycle',  'trailer', 'truck','bus','pedestrian
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_version', default='v1.0-trainval', help='choose dataset version between [v1.0-trainval][v1.0-test][v1.0-mini]')
-    parser.add_argument('--detection_file',default='/home/blp/Desktop/training_results.json', help='directory for the inference file')
-    parser.add_argument('--programme_file', default='/home/blp/Desktop/MOT')
-    parser.add_argument('--dataset_file', default='/home/blp/Desktop/mmdetection3d/data/nuscenes')
+    parser.add_argument('--detection_file',default='/home/bailiping/Desktop/training_results.json', help='directory for the inference file')
+    parser.add_argument('--programme_file', default='/home/bailiping/Desktop/MOT')
+    parser.add_argument('--dataset_file', default='/home/bailiping/Desktop/mmdetection3d/data/nuscenes')
     parser.add_argument('--parallel_process', default=4)
     parser.add_argument('--render_classes', default='')
-    parser.add_argument('--result_file', default='/home/blp/Desktop')
+    parser.add_argument('--result_file', default='/home/bailiping/Desktop')
     parser.add_argument('--render_curves', default=False)
     parser.add_argument('--config_path',default='')
     parser.add_argument('--verbose',default=True)
@@ -207,5 +207,5 @@ if __name__ == '__main__':
                 frame_submission=json.load(f)
             for bbox_info in frame_submission:
                 submission['results'][frame_token].append(bbox_info)
-    with open('/home/blp/Desktop/training_restuls_fixed.json', 'w') as f:
+    with open('/home/bailiping/Desktop/training_restuls_fixed.json', 'w') as f:
         json.dump(submission, f, cls=NumpyEncoder)

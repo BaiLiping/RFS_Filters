@@ -13,7 +13,7 @@ from utils.utils import giou3d, giou2d,readout_parameters
 import json
 
 # read parameters
-with open('/home/blp/Desktop/MOT/configs/pmbmgnn_parameters.json', 'r') as f:
+with open('/home/bailiping/mmdetection3d/data/nuscenes/configs/pmbmgnn_parameters.json', 'r') as f:
     parameters=json.load(f)
 
 class PMBMGNN_Filter:

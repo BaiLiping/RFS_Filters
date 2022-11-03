@@ -240,12 +240,12 @@ if __name__ == "__main__":
     # Settings.
     parser = argparse.ArgumentParser(description='Evaluate nuScenes tracking results.',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--result_path', default='/home/blp/Desktop/val_submission.json',type=str, help='The submission as a JSON file.')
-    parser.add_argument('--output_dir', type=str, default='/home/blp/Desktop/evaluate/nuscenes-metrics_trainval',
+    parser.add_argument('--result_path', default='/home/bailiping/Desktop/val_submission.json',type=str, help='The submission as a JSON file.')
+    parser.add_argument('--output_dir', type=str, default='/home/bailiping/Desktop/evaluate/nuscenes-metrics_trainval',
                         help='Folder to store result metrics, graphs and example visualizations.')
     parser.add_argument('--eval_set', type=str, default='val',
                         help='Which dataset split to evaluate on, train, val or test or mini_val.')
-    parser.add_argument('--dataroot', type=str, default='/home/blp/Desktop/mmdetection3d/data/nuscenes',
+    parser.add_argument('--dataroot', type=str, default='/home/bailiping/Desktop/mmdetection3d/data/nuscenes',
                         help='Default nuScenes data directory.')
     parser.add_argument('--version', type=str, default='v1.0-trainval',
                         help='Which version of the nuScenes dataset to evaluate on, e.g. v1.0-trainval.')
@@ -271,7 +271,7 @@ if __name__ == "__main__":
     render_classes_ = args.render_classes
 
     if config_path == '':
-        cfg_ = config_factory('/home/blp/Desktop/MOT/configs/tracking_config.json')
+        cfg_ = config_factory('/home/bailiping/mmdetection3d/data/nuscenes/configs/tracking_config.json')
     else:
         with open(config_path, 'r') as _f:
             cfg_ = TrackingConfig.deserialize(json.load(_f))

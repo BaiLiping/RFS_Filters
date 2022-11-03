@@ -19,7 +19,7 @@ Reverse indexing ...
 Done reverse indexing in 23.7 seconds.	
 ======	
 Initializing nuScenes tracking evaluation	
-Loaded results from /home/blp/Desktop/experiment_result/2022-08-02-11-21-19_val/val_submission.json. Found detections for 6019 samples.	
+Loaded results from /home/bailiping/Desktop/experiment_result/2022-08-02-11-21-19_val/val_submission.json. Found detections for 6019 samples.	
 Loading annotations for val split from nuScenes version: v1.0-trainval	
 Loaded ground truth annotations for 6019 samples.	
 Filtering tracks	
@@ -689,7 +689,7 @@ thr_0.6185      0.986   0.123   0.295   0.125   3567    9650    1208    8441    
 thr_0.6285      0.996   0.100   0.309   0.101   3567    9650    973     8676    1       978     973     4       1	
 	
 Calculating metrics...	
-Saving metrics to: /home/blp/Desktop/experiment_result/2022-08-02-11-21-19_val/nuscenes-metrics	
+Saving metrics to: /home/bailiping/Desktop/experiment_result/2022-08-02-11-21-19_val/nuscenes-metrics	
 	
 ### Final results ###	
 	

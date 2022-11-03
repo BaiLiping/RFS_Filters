@@ -59,8 +59,8 @@ def instance_info2bbox_array(info):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--programme_file', default='/home/blp/Desktop/MOT')
-    parser.add_argument('--dataset_folder',default='/home/blp/Desktop/mmdetection3d/data/nuscenes')
+    parser.add_argument('--programme_file', default='/home/bailiping/Desktop/MOT')
+    parser.add_argument('--dataset_folder',default='/home/bailiping/Desktop/mmdetection3d/data/nuscenes')
     args = parser.parse_args()
     return args
 
