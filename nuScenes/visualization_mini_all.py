@@ -36,7 +36,7 @@ lidar_3d_object_detection_inference_result_in_nuscenes_format_file='/home/bailip
 root_directory_for_dataset='/home/bailiping/Desktop/mmdetection3d/data/nuscenes'
 dataset_version='v1.0-test'
 '''
-lidar_3d_object_detection_inference_result_in_nuscenes_format_file='/home/bailiping/Desktop/val_results.json'
+lidar_3d_object_detection_inference_result_in_nuscenes_format_file='/home/bailiping/Desktop/mmdetection3d/data/nuscenes/detection_result/BEV_fusion/val_results.json'
 root_directory_for_dataset='/home/bailiping/Desktop/mmdetection3d/data/nuscenes'
 dataset_version='v1.0-mini'
 
@@ -81,7 +81,7 @@ def main():
     #out_file_directory_for_this_experiment='/home/bailiping/Desktop/mmdetection3d/data/nuscenes/experiment_result/2022-01-15-15-07_birth0.0001_pd0.5_ps0.5'
     out_file_directory_for_this_experiment=root_directory_for_dataset
     # save the result for this classification
-    with open('/home/bailiping/Desktop/val_results.json', 'r') as f:
+    with open('/home/bailiping/Desktop/mmdetection3d/data/nuscenes/detection_result/BEV_fusion/val_results.json', 'r') as f:
         result=json.load(f)
 
     for scene in scenes:
