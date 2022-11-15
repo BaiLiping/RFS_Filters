@@ -26,7 +26,7 @@ def parse_args():
     parser.add_argument('--data_version', default='v1.0-trainval', help='choose dataset version between [v1.0-trainval][v1.0-test][v1.0-mini]')
     parser.add_argument('--detection_file',default='/home/bailiping/Desktop/preprocessed_result.json', help='directory for the inference file')
     parser.add_argument('--programme_file', default='/home/bailiping/Desktop/MOT')
-    parser.add_argument('--dataset_file', default='/home/bailiping/Desktop/mmdetection3d/data/nuscenes')
+    parser.add_argument('--dataset_file', default='/media/bailiping/My Passport/mmdetection3d/data/nuscenes')
     parser.add_argument('--parallel_process', default=5)
     parser.add_argument('--render_classes', default='')
     parser.add_argument('--result_file', default='/home/bailiping/Desktop')
@@ -75,7 +75,7 @@ def main():
     for scene_idx in range(len(list(orderedframe.keys()))):
         
         scene_token = list(orderedframe.keys())[scene_idx]
-        out_file_directory_for_this_scene=create_scene_folder_name(scene_token, '/home/bailiping/Desktop/mmdetection3d/data/nuscenes/visualization')
+        out_file_directory_for_this_scene=create_scene_folder_name(scene_token, '/media/bailiping/My Passport/mmdetection3d/data/nuscenes/visualization')
         ordered_frames = orderedframe[scene_token]
         ego_info = egoposition[scene_token]
         # generate filter based on the filter model

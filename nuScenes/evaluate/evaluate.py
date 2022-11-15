@@ -241,7 +241,7 @@ if __name__ == "__main__":
                         help='Folder to store result metrics, graphs and example visualizations.')
     parser.add_argument('--eval_set', type=str, default='mini_val',
                         help='Which dataset split to evaluate on, train, val or test or mini_val.')
-    parser.add_argument('--dataroot', type=str, default='/home/bailiping/Desktop/mmdetection3d/data/nuscenes_mini',
+    parser.add_argument('--dataroot', type=str, default='/media/bailiping/My Passport/mmdetection3d/data/nuscenes_mini',
                         help='Default nuScenes data directory.')
     parser.add_argument('--version', type=str, default='v1.0-mini',
                         help='Which version of the nuScenes dataset to evaluate on, e.g. v1.0-trainval.')

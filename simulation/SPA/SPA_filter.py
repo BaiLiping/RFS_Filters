@@ -12,7 +12,7 @@ from util import mvnpdf
 """
 PMB Point Target Filter
 """
-class PMB_Filter:
+class SPA_Filter:
     def __init__(self, model, bayesian_filter_type, motion_model_type):
         self.model = model # use generated model which is configured for all parameters used in GM-PHD filter model for tracking the multi-targets.
         self.bayesian_filter_type = bayesian_filter_type # Bayesian filter type, i.e. Kalman, EKF, Particle filter
@@ -40,6 +40,8 @@ class PMB_Filter:
         numNew = size(newIndexes,1);
         currentLabels = cat(2,currentLabels,[step*ones(1,numNew);newIndexes']);
         '''
+
+        
 
 
 
@@ -196,7 +198,8 @@ class PMB_Filter:
         currentLabels = currentLabels(:,~isRedundant);
         currentExistences = currentExistences(~isRedundant);
         '''
-        
+        pass
+
     def loopy_belief_propogation(self,Z_k,updatedIntensity):
         '''
         #function [pupd,pnew] = lbp(wupd,wnew)

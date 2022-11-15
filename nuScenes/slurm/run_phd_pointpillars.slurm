@@ -9,4 +9,4 @@
 source activate zhubinglabenv
 
 
-python3 /home/bailiping/Desktop/MOT/run_phd_tracker.py --detection_file='/home/bailiping/Desktop/mmdetection3d/data/nuscenes/official_inference_result/pointpillars_val.json'
+python3 /home/bailiping/Desktop/MOT/run_phd_tracker.py --detection_file='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/official_inference_result/pointpillars_val.json'

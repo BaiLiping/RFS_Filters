@@ -17,9 +17,9 @@ all='bicycle+motorcycle+trailer+truck+bus+pedestrian+car'
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_version', default='v1.0-trainval', help='choose dataset version between [v1.0-trainval][v1.0-test][v1.0-mini]')
-    parser.add_argument('--detection_file',default='/home/bailiping/Desktop/mmdetection3d/data/nuscenes/detection_result/BEV_fusion/val_results.json', help='directory for the inference file')
+    parser.add_argument('--detection_file',default='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/detection_result/BEV_fusion/val_results.json', help='directory for the inference file')
     parser.add_argument('--programme_file', default='/home/bailiping/Desktop/MOT')
-    parser.add_argument('--dataset_file', default='/home/bailiping/Desktop/mmdetection3d/data/nuscenes')
+    parser.add_argument('--dataset_file', default='/media/bailiping/My Passport/mmdetection3d/data/nuscenes')
     parser.add_argument('--parallel_process', default=5)
     parser.add_argument('--render_classes', default='')
     parser.add_argument('--result_file', default='/home/bailiping/Desktop')

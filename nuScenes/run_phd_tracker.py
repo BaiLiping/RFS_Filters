@@ -23,8 +23,8 @@ from evaluate.util.utils import TrackingConfig, config_factory
 from evaluate.evaluate_tracking_result import TrackingEval
 
 
-detection_file = '/home/bailiping/Desktop/mmdetection3d/data/nuscenes/official_inference_result/centerpoint_val.json'
-dataset_file = '/home/bailiping/Desktop/mmdetection3d/data/nuscenes'
+detection_file = '/media/bailiping/My Passport/mmdetection3d/data/nuscenes/official_inference_result/centerpoint_val.json'
+dataset_file = '/media/bailiping/My Passport/mmdetection3d/data/nuscenes'
 data_version = 'v1.0-trainval'
 
 
