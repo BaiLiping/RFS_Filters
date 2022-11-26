@@ -57,7 +57,7 @@ def parse_args():
     parser.add_argument('--dataset_file', default='/media/bailiping/My Passport/mmdetection3d/data/nuscenes')
     parser.add_argument('--parallel_process', default=4)
     parser.add_argument('--render_classes', default='')
-    parser.add_argument('--result_file', default='/home/bailiping/Desktop')
+    parser.add_argument('--result_file', default='/home/bailiping/Desktop/experiment_result')
     parser.add_argument('--render_curves', default=False)
     parser.add_argument('--config_path',default='')
     parser.add_argument('--verbose',default=True)
@@ -67,7 +67,7 @@ def parse_args():
     return args
 
 def gen_track_record(inference_file, dataset_version):
-    dataset_info_file='/home/bailiping/mmdetection3d/data/nuscenes/configs/dataset_info.json'
+    dataset_info_file='/media/bailiping/My\ Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
     
     if dataset_version =='v1.0-trainval':
         set_info='train'
@@ -273,7 +273,7 @@ class Box:
 
 def main(token, out_file_directory_for_this_experiment):
     args=parse_args()
-    dataset_info_file=args.programme_file+'/configs/dataset_info.json'
+    dataset_info_file='/media/bailiping/My\ Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
     
     if args.data_version =='v1.0-trainval':
         set_info='train'

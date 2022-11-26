@@ -4,7 +4,7 @@ from numpyencoder import NumpyEncoder
 from nuscenes import NuScenes
 from utils.utils import compute_trajectory, boxes_iou_bev, initiate_submission_file_mini, create_experiment_folder, create_classification_folder, initiate_submission_file, create_scene_folder, gen_ordered_frames, gen_measurement_of_this_class, initiate_classification_submission_file
 
-lidar_3d_object_detection_inference_result_in_nuscenes_format_file = '/media/bailiping/My Passport/mmdetection3d/data/nuscenes/official_inference_result/centerpoint_val_detection.json'
+lidar_3d_object_detection_inference_result_in_nuscenes_format_file = '/media/bailiping/'My Passport'/mmdetection3d/data/nuscenes/official_inference_result/centerpoint_val_detection.json'
 root_directory_for_dataset = '/media/bailiping/My Passport/mmdetection3d/data/nuscenes'
 dataset_version = 'v1.0-trainval'
 

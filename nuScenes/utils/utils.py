@@ -11,8 +11,6 @@ from tokenize import Number
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import cv2
-from cv2 import VideoWriter, VideoWriter_fourcc, imread
 import numpy as np
 from tqdm import tqdm
 from scipy.optimize import linear_sum_assignment
@@ -41,7 +39,6 @@ from abc import ABC, abstractmethod
 from functools import reduce
 from typing import Tuple, List, Dict
 
-import cv2
 import numpy as np
 from matplotlib.axes import Axes
 from pyquaternion import Quaternion
@@ -407,7 +404,7 @@ def fill_frame_result(frame_result,estimation, frame_token):
 def gen_measurement_all(estimated_bboxes_at_current_frame):
         
     # read parameters
-    with open('/home/bailiping/mmdetection3d/data/nuscenes/configs/pmbmgnn_parameters.json', 'r') as f:
+    with open("/media/bailiping/'My Passport'/mmdetection3d/data/nuscenes/configs/pmbmgnn_parameters.json", 'r') as f:
         parameters=json.load(f)
     Z_k=[]
     for classification in ['bicycle','motorcycle',  'trailer', 'truck','bus','pedestrian','car']:
@@ -1390,7 +1387,7 @@ def incorporate_track(Z_k,predict_previous_frame):
     return Z_k_out
 
 def create_experiment_folder(root_directory_for_dataset, time,comment):
-    result_path=os.path.join(root_directory_for_dataset, 'experiment_result')
+    result_path='/home/bailiping/Desktop/experiment_result'
     # generate the out file directory for this scene
     timefolder=os.path.join(result_path,time)
     experiment_folder=timefolder+'_'+comment
@@ -1476,7 +1473,7 @@ def gen_measurement_of_this_class(detection_score_thr,estimated_bboxes_at_curren
 def gen_measurement_all(estimated_bboxes_at_current_frame):
         
     # read parameters
-    with open('/home/bailiping/mmdetection3d/data/nuscenes/configs/pmbmgnn_parameters.json', 'r') as f:
+    with open("/media/bailiping/'My Passport'/mmdetection3d/data/nuscenes/configs/pmbmgnn_parameters.json", 'r') as f:
         parameters=json.load(f)
     Z_k=[]
     for classification in ['bicycle','motorcycle',  'trailer', 'truck','bus','pedestrian','car']:

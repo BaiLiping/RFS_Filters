@@ -23,7 +23,7 @@ from evaluate.util.utils import TrackingConfig, config_factory
 from evaluate.evaluate_tracking_result import TrackingEval
 
 
-detection_file = '/media/bailiping/My Passport/mmdetection3d/data/nuscenes/official_inference_result/centerpoint_val.json'
+detection_file = '/media/bailiping/'My Passport'/mmdetection3d/data/nuscenes/official_inference_result/centerpoint_val.json'
 dataset_file = '/media/bailiping/My Passport/mmdetection3d/data/nuscenes'
 data_version = 'v1.0-trainval'
 
@@ -56,7 +56,7 @@ def parse_args():
                         help='log the result into a folder named after current time')
     parser.add_argument('--comment', default='phd')
     parser.add_argument('--render_classes', default='')
-    parser.add_argument('--result_file', default='/home/bailiping/Desktop')
+    parser.add_argument('--result_file', default='/home/bailiping/Desktop/experiment_result')
     parser.add_argument('--render_curves', default='False')
     parser.add_argument('--config_path',default='')
     parser.add_argument('--verbose',default='True')

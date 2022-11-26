@@ -11,7 +11,7 @@ Processing
 The current version of this code, is updated in 20210810.
 """
 
-from PMB_filter import PMB_Filter
+from simulation.SPA.SPA_filter import PMB_Filter
 from util import parse_args, gen_ground_truth_parameters, gen_filter_model, gen_simulation,filter_plot,plot_gospa
 from matplotlib import pyplot as plt
 import time

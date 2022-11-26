@@ -31,7 +31,7 @@ def parse_args():
     parser.add_argument('--dataset_file', default='/media/bailiping/My Passport/mmdetection3d/data/nuscenes')
     parser.add_argument('--parallel_process', default=2)
     parser.add_argument('--render_classes', default='')
-    parser.add_argument('--result_file', default='/home/bailiping/Desktop')
+    parser.add_argument('--result_file', default='/home/bailiping/Desktop/experiment_result')
     parser.add_argument('--render_curves', default='False')
     parser.add_argument('--config_path',default='')
     parser.add_argument('--verbose',default='True')
@@ -132,7 +132,7 @@ def compute_duplicated_detection(Z_k):
 def gen_measurement_all(estimated_bboxes_at_current_frame):
         
     # read parameters
-    with open('/home/bailiping/mmdetection3d/data/nuscenes/configs/pmbmgnn_parameters.json', 'r') as f:
+    with open("/media/bailiping/'My Passport'/mmdetection3d/data/nuscenes/configs/pmbmgnn_parameters.json", 'r') as f:
         parameters=json.load(f)
     Z_k=[]
     for classification in ['bicycle','motorcycle',  'trailer', 'truck','bus','pedestrian','car']:
@@ -178,7 +178,7 @@ def fill_frame_result(frame_result,estimation, frame_token):
 def main(out_file_directory_for_this_experiment):
     args=parse_args()
     nuscenes_data = NuScenes(version = args.data_version, dataroot=args.dataset_file, verbose=False)
-    dataset_info_file=args.programme_file+'/configs/dataset_info.json'
+    dataset_info_file='/media/bailiping/My\ Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
     config=args.programme_file+'/configs/pmbmgnn_parameters.json'
     
     if args.data_version =='v1.0-trainval':

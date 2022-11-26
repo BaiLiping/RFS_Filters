@@ -2,12 +2,9 @@ from logging import raiseExceptions
 import os
 import json
 from numpyencoder import NumpyEncoder
-from utils.utils import BBox, predict_for_all,incorporate_track,visualize_duplicated_detection,iou3d,compute_duplicated_detection,fill_frame_result,gen_measurement_all, nms, nu_array2mot_bbox,create_scene_folder_name,create_experiment_folder, initiate_submission_file, gen_measurement_of_this_class, initiate_classification_submission_file, readout_parameters
-from trackers.PMBMGNN import PMBMGNN_Filter_Point_Target_single_class as pmbmgnn_tracker
-from trackers.PMBMGNN import util as pmbmgnn_ulti
+from utils.utils import BBox,predict_for_all,incorporate_track,visualize_duplicated_detection,iou3d,compute_duplicated_detection,fill_frame_result,gen_measurement_all, nms, nu_array2mot_bbox,create_scene_folder_name,create_experiment_folder, initiate_submission_file, gen_measurement_of_this_class, initiate_classification_submission_file, readout_parameters
 from datetime import datetime
 from evaluate.util.utils import TrackingConfig, config_factory
-from evaluate.evaluate_tracking_result import TrackingEval
 import multiprocessing
 import argparse
 from tqdm import tqdm
@@ -64,12 +61,12 @@ classifications = ['bicycle','motorcycle',  'trailer', 'truck','bus','pedestrian
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_version', default='v1.0-trainval', help='choose dataset version between [v1.0-trainval][v1.0-test][v1.0-mini]')
-    parser.add_argument('--detection_file',default='/home/bailiping/Desktop/training_results.json', help='directory for the inference file')
+    parser.add_argument('--detection_file',default='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/detection_result/BEVfusion/val_results.json', help='directory for the inference file')
     parser.add_argument('--programme_file', default='/home/bailiping/Desktop/MOT')
     parser.add_argument('--dataset_file', default='/media/bailiping/My Passport/mmdetection3d/data/nuscenes')
     parser.add_argument('--parallel_process', default=8)
     parser.add_argument('--render_classes', default='')
-    parser.add_argument('--result_file', default='/home/bailiping/Desktop')
+    parser.add_argument('--result_file', default='/home/bailiping/Desktop/experiment_result')
     parser.add_argument('--render_curves', default=False)
     parser.add_argument('--config_path',default='')
     parser.add_argument('--verbose',default=True)
@@ -81,10 +78,10 @@ def parse_args():
 
 def main(token, out_file_directory_for_this_experiment):
     args=parse_args()
-    dataset_info_file=args.programme_file+'/configs/dataset_info.json'
+    dataset_info_file='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
     
     if args.data_version =='v1.0-trainval':
-        set_info='train'
+        set_info='val'
     elif args.data_version == 'v1.0-mini':
         set_info='mini_val'
     elif args.data_version == 'v1.0-test':
@@ -266,7 +263,7 @@ def main(token, out_file_directory_for_this_experiment):
     plt.close()
 
     
-    with open('/home/bailiping/Desktop/train_gt_track_record.json', 'w') as f:
+    with open('/home/bailiping/Desktop/val_gt_track_record.json', 'w') as f:
         json.dump(track_record, f, cls=NumpyEncoder)
     with open('/home/bailiping/Desktop/close_track_record.json', 'w') as f:
         json.dump(close_tracks_record, f, cls=NumpyEncoder)
