@@ -262,7 +262,7 @@ if __name__ == '__main__':
         render_classes_ = arguments.render_classes
     
         if config_path == '':
-            cfg_ = config_factory(arguments.programme_file+'/configs/tracking_config.json')
+            cfg_ = config_factory('/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/tracking_config.json')
         else:
             with open(config_path, 'r') as _f:
                 cfg_ = TrackingConfig.deserialize(json.load(_f))

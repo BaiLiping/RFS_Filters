@@ -25,10 +25,10 @@ all='bicycle+motorcycle+trailer+truck+bus+pedestrian+car'
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_version', default='v1.0-trainval', help='choose dataset version between [v1.0-trainval][v1.0-test][v1.0-mini]')
-    parser.add_argument('--detection_file',default='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/detection_result/BEVfusion/val_results.json', help='directory for the inference file')
+    parser.add_argument('--detection_file',default='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/detection_result/BEVfusion/val_results_fixed.json', help='directory for the inference file')
     parser.add_argument('--programme_file', default='/home/bailiping/Desktop/MOT')
     parser.add_argument('--dataset_file', default='/media/bailiping/My Passport/mmdetection3d/data/nuscenes')
-    parser.add_argument('--parallel_process', default=8)
+    parser.add_argument('--parallel_process', default=18)
     parser.add_argument('--render_classes', default='')
     parser.add_argument('--result_file', default='/home/bailiping/Desktop/experiment_result')
     parser.add_argument('--render_curves', default='False')
@@ -231,7 +231,7 @@ if __name__ == '__main__':
         render_classes_ = arguments.render_classes
     
         if config_path == '':
-            cfg_ = config_factory(arguments.programme_file+'/configs/tracking_config.json')
+            cfg_ = config_factory('/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/tracking_config.json')
         else:
             with open(config_path, 'r') as _f:
                 cfg_ = TrackingConfig.deserialize(json.load(_f))

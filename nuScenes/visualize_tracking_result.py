@@ -17,7 +17,6 @@ from utils.nuscenes_dataset import NuScenes
 from matplotlib import pyplot as plt
 from pyquaternion import Quaternion
 
-
 import json
 import math
 import os
@@ -55,7 +54,7 @@ def parse_args():
     parser.add_argument('--detection_file',default='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/detection_result/BEVfusion/val_results.json', help='directory for the inference file')
     parser.add_argument('--programme_file', default='/home/bailiping/Desktop/MOT')
     parser.add_argument('--dataset_file', default='/media/bailiping/My Passport/mmdetection3d/data/nuscenes')
-    parser.add_argument('--parallel_process', default=8)
+    parser.add_argument('--parallel_process', default=2)
     parser.add_argument('--render_classes', default='')
     parser.add_argument('--result_file', default='/home/bailiping/Desktop/experiment_result')
     parser.add_argument('--render_curves', default=False)
@@ -272,7 +271,9 @@ class Box:
 
 
 def main(token, out_file_directory_for_this_experiment):
+    
     args=parse_args()
+    nusc = NuScenes(version=args.data_version, dataroot=args.dataset_file, verbose=True)
     dataset_info_file='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
     
     if args.data_version =='v1.0-trainval':
@@ -287,7 +288,7 @@ def main(token, out_file_directory_for_this_experiment):
     with open(dataset_info_file, 'rb') as f:
         dataset_info=json.load(f)
 
-    with open('/home/bailiping/Desktop/centerpoint_val_submission.json', 'rb') as f:
+    with open('/home/bailiping/Desktop/val_submission.json', 'rb') as f:
         result_meta=json.load(f)
     tracking_result_all=result_meta['results']
     inference_track_record=gen_track_record(tracking_result_all, args.data_version)
@@ -298,8 +299,6 @@ def main(token, out_file_directory_for_this_experiment):
     # get ground track record
     with open('/home/bailiping/Desktop/val_gt_track_record.json', 'rb') as f:
         gt_track_record=json.load(f)
-
-
 
     for scene_idx in range(len(list(orderedframe.keys()))):
         if args.single_thread_debug==False:
@@ -381,6 +380,8 @@ def main(token, out_file_directory_for_this_experiment):
                 inference_track_record[scene_token][track_id]['all_positions']=all_positions
                 inference_track_record[scene_token][track_id]['all_record']=all_record
         
+
+
         #plot the tracks
         for frame_idx, frame_token in enumerate(ordered_frames):
             ego_position_of_this_frame=egoposition[scene_token][str(frame_idx)]
@@ -391,6 +392,24 @@ def main(token, out_file_directory_for_this_experiment):
         
             # Show ego vehicle.
             ax.plot(0, 0, 'x', color='red')
+
+
+            # read the lidar point cloud
+            
+            frame_data = nusc.get('sample', frame_token)
+            pc, times = LidarPointCloud.from_file_multisweep(nusc, frame_data, 'LIDAR_TOP', 'LIDAR_TOP', nsweeps=1)
+    
+            # Show lidar point cloud.
+            viewpoint = np.eye(4)  
+            points = view_points(pc.points[:3, :], viewpoint, normalize=False)
+            
+            position_rotated=np.dot(Quaternion(ego_position_of_this_frame[3:]).rotation_matrix, points)
+            position_rotated=np.dot(Quaternion(sensor_calibration_data_of_this_frame[3:]).rotation_matrix, position_rotated)
+            
+            
+            colors = 'k'
+            point_scale = 0.2
+            scatter = ax.scatter(position_rotated[0, :], position_rotated[1, :], c=colors, s=point_scale)
          
             for track_id in list(inference_track_record[scene_token].keys()):
                 track=inference_track_record[scene_token][track_id]
