@@ -31,7 +31,7 @@ def parse_args():
 def main(classification,token, out_file_directory_for_this_experiment):
     args=parse_args()
     dataset_info_file='/media/bailiping/My\ Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
-    config=args.programme_file+'/configs/pmbmgnn_parameters.json'
+    config='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/pmbmgnn_parameters.json'
     if args.data_version =='v1.0-trainval':
         set_info='train'
     elif args.data_version == 'v1.0-mini':

@@ -206,13 +206,13 @@ def main(args):
                 if cur_sample_token == '':
                     break
                 frame_index += 1
-            #with open(args.programme_file+'/configs/dataset_info_with_radar_{}.json'.format(scene_token), 'w') as f:
+            #with open(args.programme_file+'/configs/dataset_info_{}.json'.format(scene_token), 'w') as f:
             #    json.dump(aggregated_info, f, cls=NumpyEncoder)
             #f.close()
             pbar.update(1)
         pbar.close()
     
-    with open(args.programme_file+'/configs/dataset_info.json', 'w') as f:
+    with open('/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json', 'w') as f:
         json.dump(aggregated_info, f, cls=NumpyEncoder)
     f.close()
 

@@ -34,7 +34,7 @@ def main():
     preprocessed_detection = {}
     preprocessed_detection['results']={}
     dataset_info_file='/media/bailiping/My\ Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
-    config=args.programme_file+'/configs/pmbmgnn_parameters.json'
+    config='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/pmbmgnn_parameters.json'
     
     if args.data_version =='v1.0-trainval':
         set_info='val'

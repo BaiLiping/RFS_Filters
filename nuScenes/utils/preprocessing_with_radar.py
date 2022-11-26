@@ -80,8 +80,8 @@ def main(args):
         scene_names = splits.create_splits_scenes()[set_info]
         pbar = tqdm(total=len(scene_names))
         # read the aggregated information file
-        #if os.path.exists(args.programme_file+'/configs/dataset_info_with_radar.json'):
-        #    with open(args.programme_file+'/configs/dataset_info_with_radar.json', 'rb') as f:
+        #if os.path.exists('/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'):
+        #    with open('/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json', 'rb') as f:
         #        aggregated_info = json.load(f)
         #else:
         #    aggregated_info={}
@@ -242,13 +242,13 @@ def main(args):
                 if cur_sample_token == '':
                     break
                 frame_index += 1
-            with open(args.programme_file+'/configs/dataset_info_with_radar_{}.json'.format(scene_token), 'w') as f:
+            with open(args.programme_file+'/configs/dataset_info_{}.json'.format(scene_token), 'w') as f:
                 json.dump(aggregated_info, f, cls=NumpyEncoder)
             f.close()
             pbar.update(1)
         pbar.close()
     
-    #with open(args.programme_file+'/configs/dataset_info_with_radar_mini.json', 'w') as f:
+    #with open(args.programme_file+'/configs/dataset_info_mini.json', 'w') as f:
     #    json.dump(aggregated_info, f, cls=NumpyEncoder)
     #f.close()
 

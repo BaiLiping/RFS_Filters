@@ -66,7 +66,7 @@ def parse_args():
     
 def main():
     args = parse_args()
-    dataset_info=args.programme_file+'/configs/dataset_info.json'
+    dataset_info='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
     config=args.programme_file+'/configs/phd_parameters.json'
     # read the nuscenes data
     nuscenes_data = NuScenes(version=args.data_version,
