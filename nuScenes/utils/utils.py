@@ -404,7 +404,7 @@ def fill_frame_result(frame_result,estimation, frame_token):
 def gen_measurement_all(estimated_bboxes_at_current_frame):
         
     # read parameters
-    with open("/media/bailiping/'My Passport'/mmdetection3d/data/nuscenes/configs/pmbmgnn_parameters.json", 'r') as f:
+    with open('/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/pmbmgnn_parameters.json', 'r') as f:
         parameters=json.load(f)
     Z_k=[]
     for classification in ['bicycle','motorcycle',  'trailer', 'truck','bus','pedestrian','car']:
@@ -1473,7 +1473,7 @@ def gen_measurement_of_this_class(detection_score_thr,estimated_bboxes_at_curren
 def gen_measurement_all(estimated_bboxes_at_current_frame):
         
     # read parameters
-    with open("/media/bailiping/'My Passport'/mmdetection3d/data/nuscenes/configs/pmbmgnn_parameters.json", 'r') as f:
+    with open('/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/pmbmgnn_parameters.json', 'r') as f:
         parameters=json.load(f)
     Z_k=[]
     for classification in ['bicycle','motorcycle',  'trailer', 'truck','bus','pedestrian','car']:
