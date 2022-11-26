@@ -51,6 +51,9 @@ for step = 1:numSteps
     [newIndexes,measurements] = getPromisingNewTargets(currentParticlesKinematic,currentParticlesExtent,currentExistences,measurements,parameters);
     numNew = size(newIndexes,1);
     currentLabels = cat(2,currentLabels,[step*ones(1,numNew);newIndexes']);
+    % Question, why there are two numbers for each label?
+    % Maybe one of the label is there to indicate how many detections is
+    % associated with this object?
     
     
     % initialize belief propagation (BP) message passing

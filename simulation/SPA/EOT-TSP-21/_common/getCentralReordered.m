@@ -37,25 +37,25 @@ indexesNumericNew = zeros(0,1);
 numClusters = size(clusters,2);
 centralIndexes = zeros(numClusters,1);
 for cluster = 1:numClusters
-    
+
     indexes = nonzeros(clusters(:,cluster));
     currentMeasurements = measurementsFree(:,indexes);
-    
+
     currentIndexesNumeric = freeIndexesNumeric(indexes);
     numMeasurements = size(indexes,1);
-    
+
     if(numel(indexes)>1)
-        
+
         distanceMatrix = zeros(numMeasurements,numMeasurements);
         for measurement1 = 1:numMeasurements
             for measurement2 = (measurement1+1):numMeasurements
                 distVector = currentMeasurements(:,measurement1)-currentMeasurements(:,measurement2);
-                
+
                 distanceMatrix(measurement1,measurement2) = sqrt(distVector'/measurementsCovariance*distVector);
                 distanceMatrix(measurement2,measurement1) = distanceMatrix(measurement1,measurement2);
             end
         end
-        
+
         % order measurements within cluster according to sum of all distances to other measurements in cluster
         distanceVector = sum(distanceMatrix,2);
         [~,indexes] = sort(distanceVector,'descend');
@@ -63,7 +63,7 @@ for cluster = 1:numClusters
 
     end
     indexesNumericNew = [currentIndexesNumeric;indexesNumericNew];
-    
+
     % central measurement is last
     centralIndexes(1:cluster) = centralIndexes(1:cluster) + numMeasurements;
 end
@@ -94,10 +94,10 @@ entry = 1;
 for measurement1 = 1:numMeasurements
     for measurement2 = (measurement1+1):numMeasurements
         distVector = measurements(:,measurement1)-measurements(:,measurement2);
-        
+
         entry = entry + 1;
         distanceVector(entry) = sqrt(distVector'/measurementsCovariance*distVector);
-        
+
         distanceMatrix(measurement1,measurement2) = distanceVector(entry);
         distanceMatrix(measurement2,measurement1) = distanceVector(entry);
     end

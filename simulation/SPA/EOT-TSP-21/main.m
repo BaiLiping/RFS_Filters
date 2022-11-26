@@ -42,6 +42,10 @@ parameters.detectionThreshold = .5;
 parameters.thresholdPruning = 10^(-3);
 parameters.minimumTrackLength = 1;
 
+% censoring and measurement reordering parameters
+parameters.freeThreshold = 0.9;
+parameters.clusterThreshold = 0.9;
+parameters.minClusterElements = 1;
 
 % message passing parameters
 parameters.numOuterIterations = 2;
