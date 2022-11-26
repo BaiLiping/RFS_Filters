@@ -47,11 +47,8 @@ parameters.detectionThreshold = .5;
 parameters.thresholdPruning = 10^(-3);
 parameters.minimumTrackLength = 1;
 
-
 % message passing parameters
 parameters.numOuterIterations = 2;
-
-
 
 % generate true start states
 [startStates,startMatrixes] = getStartStates(numTargets,startRadius,startVelocity,parameters);
