@@ -16,8 +16,8 @@ inputDA = zeros(numTargets,numMeasurements);
 
 for target = 1:numTargets
     lengthIndex = numParticles(target);
-    tmpMean = reshape(currentParticlesKinematic(target).particlesKinematic(1:2,:),2,lengthIndex);
-    tmpCov = reshape(currentParticlesKinematic(target).particlesExtent,2,2,lengthIndex) + repmat(measurementsCovariance,[1,1,lengthIndex]);
+    tmpMean = reshape(currentParticlesKinematic(target),2,2,lengthIndex);
+    tmpCov = reshape(currentParticlesExtent(target),2,2,lengthIndex) + repmat(measurementsCovariance,[1,1,lengthIndex]);
     for measurement = numMeasurements:-1:1
         likelihood1{target}(:,measurement) = constantFactor * exp(getLogWeightsFast(measurements(:,measurement),tmpMean,tmpCov));
         inputDA(target,measurement) = currentEpsilonExtrinsic(target,measurement) * currentParticlesKinematic(target).particleWeights'*likelihood1{target}(:,measurement);
