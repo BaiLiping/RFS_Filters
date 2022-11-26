@@ -32,10 +32,9 @@ parameters.priorExtent1 = [[meanTargetDimension 0];[0 meanTargetDimension]]*(par
 parameters.degreeFreedomPrediction = 20000;
 
 % censoring and measurement reordering parameters
-parameters.freeThreshold = 0.9;
+parameters.freeThreshold = .85;
 parameters.clusterThreshold = 0.9;
-parameters.minClusterElements = 1;
-
+parameters.minClusterElements = 2;
 
 % sampling parameters
 parameters.numParticles = 5000;
@@ -51,16 +50,12 @@ parameters.minimumTrackLength = 1;
 % message passing parameters
 parameters.numOuterIterations = 2;
 
-
-
 % generate true start states
 [startStates,startMatrixes] = getStartStates(numTargets,startRadius,startVelocity,parameters);
 appearanceFromTo = [[3;83],[3;83],[6;86],[6;86],[9;89],[9;89],[12;92],[12;92],[15;95],[15;95]];
 
-
 % generate true track
 [targetTracks,targetExtents] = generateTracksUnknown(parameters,startStates,startMatrixes,appearanceFromTo,numSteps);
-
 
 % generate measurements
 measurements = generateClutteredMeasurements(targetTracks, targetExtents, parameters);
