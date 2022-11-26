@@ -156,7 +156,7 @@ def main():
     multiple_correct_detections_for_gt=np.zeros(number_of_classifications)
 
     nuscenes_data = NuScenes(version = args.data_version, dataroot=args.dataset_file, verbose=False)
-    dataset_info_file='/media/bailiping/My\ Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
+    dataset_info_file='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
     
     set_info='val'
     # read ordered frame info

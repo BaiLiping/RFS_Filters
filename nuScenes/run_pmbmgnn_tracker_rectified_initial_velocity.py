@@ -39,7 +39,7 @@ def parse_args():
 def main():
     args=parse_args()
     #nuscenes_data = NuScenes(version = args.data_version, dataroot=args.dataset_file, verbose=False)
-    dataset_info_file='/media/bailiping/My\ Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
+    dataset_info_file='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
     config='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/pmbmgnn_parameters.json'
     
     classifications = ['bicycle','motorcycle',  'trailer', 'truck','bus','pedestrian','car']

@@ -29,7 +29,7 @@ def parse_args():
     parser.add_argument('--detection_file',default='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/detection_result/BEVfusion/val_results.json', help='directory for the inference file')
     parser.add_argument('--programme_file', default='/home/bailiping/Desktop/MOT')
     parser.add_argument('--dataset_file', default='/media/bailiping/My Passport/mmdetection3d/data/nuscenes')
-    parser.add_argument('--parallel_process', default=2)
+    parser.add_argument('--parallel_process', default=8)
     parser.add_argument('--render_classes', default='')
     parser.add_argument('--result_file', default='/home/bailiping/Desktop/experiment_result')
     parser.add_argument('--render_curves', default=False)
@@ -84,7 +84,6 @@ def main(token, out_file_directory_for_this_experiment):
     for classification in classifications:
         # readout parameters
         z_offset, birth_rate, P_s, P_d, use_ds_as_pd,clutter_rate, bernoulli_gating, extraction_thr, ber_thr, poi_thr, eB_thr, detection_score_thr, nms_score, confidence_score, P_init = readout_parameters(classification, parameters)
-        P_init=30
         # adjust detection_scrore_thr for pointpillars
         # this step is necessary because the pointpillar detections for cars and pedestrian would generate excessive number of bounding boxes and result in unnecessary compuations.
         # generate filter model based on the classification
@@ -124,11 +123,11 @@ def main(token, out_file_directory_for_this_experiment):
             
             Z_k_original=gen_measurement_all(estimated_bboxes_at_current_frame)
             frame_result=[]
-
+            '''
 
             #if frame_idx==0:
-            Z_k_with_velocity=[]
-            radar_points_of_this_frame=dataset_info[set_info]['radar_points'][scene_token][str(frame_idx)]
+            #Z_k_with_velocity=[]
+            #radar_points_of_this_frame=dataset_info[set_info]['radar_points'][scene_token][str(frame_idx)]
             #visualize_radar_and_bbox(Z_k_original,radar_points_of_this_frame, sensor_calibration_data_of_this_frame,ego_of_this_frame,str(frame_idx), str(scene_idx))
             
             for z in Z_k_original:
@@ -176,6 +175,8 @@ def main(token, out_file_directory_for_this_experiment):
                     z['velocity'][1]=ave_velocity_y
                 Z_k_with_velocity.append(z)
             Z_k=Z_k_with_velocity
+            '''
+            Z_k=Z_k_original
           
             # check if pre_timestamp file exist
             if previous_frame_token_exist==True:
@@ -282,8 +283,8 @@ def main(token, out_file_directory_for_this_experiment):
 if __name__ == '__main__':
     # read out dataset version
     arguments = parse_args()
-    dataset_info_file=arguments.programme_file+'/configs/dataset_info.json'
-    config=arguments.programme_file+'/configs/pmbmgnn_parameters.json'
+    dataset_info_file='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
+    config='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/pmbmgnn_parameters.json'
     if arguments.data_version =='v1.0-trainval':
         set_info='val'
     elif arguments.data_version == 'v1.0-mini':

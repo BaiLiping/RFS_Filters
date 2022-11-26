@@ -67,7 +67,7 @@ def parse_args():
     return args
 
 def gen_track_record(inference_file, dataset_version):
-    dataset_info_file='/media/bailiping/My\ Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
+    dataset_info_file='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
     
     if dataset_version =='v1.0-trainval':
         set_info='train'
@@ -273,7 +273,7 @@ class Box:
 
 def main(token, out_file_directory_for_this_experiment):
     args=parse_args()
-    dataset_info_file='/media/bailiping/My\ Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
+    dataset_info_file='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
     
     if args.data_version =='v1.0-trainval':
         set_info='train'
@@ -519,8 +519,8 @@ def main(token, out_file_directory_for_this_experiment):
 if __name__ == '__main__':
     # read out dataset version
     arguments = parse_args()
-    dataset_info_file=arguments.programme_file+'/configs/dataset_info.json'
-    config=arguments.programme_file+'/configs/pmbmgnn_parameters.json'
+    dataset_info_file='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
+    config='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/pmbmgnn_parameters.json'
     if arguments.data_version =='v1.0-trainval':
         set_info='val'
     elif arguments.data_version == 'v1.0-mini':

@@ -25,7 +25,7 @@ classifications = ['bicycle','motorcycle',  'trailer', 'truck','bus','pedestrian
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_version', default='v1.0-trainval', help='choose dataset version between [v1.0-trainval][v1.0-test][v1.0-mini]')
-    parser.add_argument('--detection_file',default="/media/bailiping/'My Passport'/mmdetection3d/data/nuscenes/detection_result/BEVfusion/training_results.json", help='directory for the inference file')
+    parser.add_argument('--detection_file',default='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/detection_result/BEVfusion/val_results.json', help='directory for the inference file')
     parser.add_argument('--programme_file', default='/home/bailiping/Desktop/MOT')
     parser.add_argument('--dataset_file', default='/media/bailiping/My Passport/mmdetection3d/data/nuscenes')
     parser.add_argument('--parallel_process', default=4)
@@ -35,7 +35,7 @@ def parse_args():
     parser.add_argument('--config_path',default='')
     parser.add_argument('--verbose',default=True)
     parser.add_argument('--plot_result',default=False)
-    parser.add_argument('--single_thread_debug',default=False)
+    parser.add_argument('--single_thread_debug',default=True)
     args = parser.parse_args()
     return args
 
@@ -44,11 +44,11 @@ def main(token, out_file_directory_for_this_experiment):
     args=parse_args()
     if args.plot_result:
         nuscenes_data = NuScenes(version = args.data_version, dataroot=args.dataset_file, verbose=False)
-    dataset_info_file='/media/bailiping/My\ Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
+    dataset_info_file='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
     config='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/pmbmgnn_parameters.json'
     
     if args.data_version =='v1.0-trainval':
-        set_info='train'
+        set_info='val'
     elif args.data_version == 'v1.0-mini':
         set_info='mini_val'
     elif args.data_version == 'v1.0-test':
@@ -163,8 +163,8 @@ def main(token, out_file_directory_for_this_experiment):
 if __name__ == '__main__':
     # read out dataset version
     arguments = parse_args()
-    dataset_info_file=arguments.programme_file+'/configs/dataset_info.json'
-    config=arguments.programme_file+'/configs/pmbmgnn_parameters.json'
+    dataset_info_file='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/dataset_info.json'
+    config='/media/bailiping/My Passport/mmdetection3d/data/nuscenes/configs/pmbmgnn_parameters.json'
     if arguments.data_version =='v1.0-trainval':
         set_info='val'
     elif arguments.data_version == 'v1.0-mini':
@@ -207,5 +207,5 @@ if __name__ == '__main__':
                 frame_submission=json.load(f)
             for bbox_info in frame_submission:
                 submission['results'][frame_token].append(bbox_info)
-    with open('/home/bailiping/Desktop/training_restuls_fixed.json', 'w') as f:
+    with open('/media/bailiping/My Passport/mmdetection3d/data/nuscenes/detection_result/BEVfusion/val_results_fixed.json', 'w') as f:
         json.dump(submission, f, cls=NumpyEncoder)
