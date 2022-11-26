@@ -109,6 +109,44 @@ def gen_filter_model():
     #         [0, 0,   1,   0],
     #         [0, 0,   0,   1],
     #     ])
+
+    '''
+    % main parameters of the statistical model
+    parameters.scanTime = .2;
+    parameters.accelerationDeviation = 1;
+    parameters.survivalProbability = 0.99;
+    parameters.meanBirths = .01;
+    parameters.surveillanceRegion = [[-200; 200] [-200; 200]];
+    parameters.measurementVariance = 1^2;
+    parameters.meanMeasurements = 8;
+    parameters.meanClutter = 10;
+    
+    % prior distribution parameters
+    parameters.priorVelocityCovariance = diag([10^2;10^2]);
+    parameters.priorExtent2 = 100;                       
+    parameters.priorExtent1 = [[meanTargetDimension 0];[0 meanTargetDimension]]*(parameters.priorExtent2-3);
+    parameters.degreeFreedomPrediction = 20000;
+    
+    % censoring and measurement reordering parameters
+    parameters.freeThreshold = .85;
+    parameters.clusterThreshold = 0.9;
+    parameters.minClusterElements = 2;
+    
+    % sampling parameters
+    parameters.numParticles = 5000;
+    parameters.regularizationDeviation = 0;
+    
+    % detection and pruning parameters
+    parameters.detectionThreshold = .5;
+    parameters.thresholdPruning = 10^(-3);
+    parameters.minimumTrackLength = 1;
+    
+    
+    % message passing parameters
+    parameters.numOuterIterations = 2;
+    '''
+
+
     filter_model['F_k'] = np.eye(4, dtype=np.float64)
     I = T*np.eye(2, dtype=np.float64)
     filter_model['F_k'][0:2, 2:4] = I

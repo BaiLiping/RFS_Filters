@@ -26,6 +26,190 @@ class SPA_Filter:
             so we employee Bayesian filter(e.g. Kalman, as now the motion model is just constant velocity(CV) motion model.) 
             to filtering the parameters of Gaussian mixture PHD.
     """
+    def getPromisingNewTarget(self, currentParticlesKinematicTmp, currentExistencesTmp, measurements):
+        '''
+        function [ newIndexes, measurements ] = getPromisingNewTargets( currentParticlesKinematicTmp, currentParticlesExtentTmp, currentExistencesTmp, measurements, parameters )
+        numMeasurements = size( measurements, 2 );
+        numParticles = size( currentParticlesKinematicTmp, 2 );
+        measurementsCovariance = parameters.measurementVariance * eye( 2 );
+        surveillanceRegion = parameters.surveillanceRegion;
+        areaSize = ( surveillanceRegion( 2, 1 ) - surveillanceRegion( 1, 1 ) ) * ( surveillanceRegion( 2, 2 ) - surveillanceRegion( 1, 2 ) );
+        meanMeasurements = parameters.meanMeasurements;
+        meanClutter = parameters.meanClutter;
+        constantFactor = areaSize * ( meanMeasurements / meanClutter );
+        
+        probabilitiesNew = ones( numMeasurements, 1 );
+        for measurement = 1:numMeasurements
+            numTargets = size( currentParticlesKinematicTmp, 3 );
+        
+            inputDA = ones( 2, numTargets );
+            likelihoods = zeros( numParticles, numTargets );
+            for target = 1:numTargets
+                likelihoods( :, target ) = constantFactor .* exp( getLogWeightsFast( measurements( :, measurement ), currentParticlesKinematicTmp( 1:2, :, target ), getSquare2Fast( currentParticlesExtentTmp( :, :, :, target ) ) + repmat( measurementsCovariance, [ 1, 1, numParticles ] ) ) );
+                inputDA( 2, target ) = mean( likelihoods( :, target ), 1 );
+                inputDA( :, target ) = currentExistencesTmp( target ) * inputDA( :, target ) + ( 1 - currentExistencesTmp( target ) ) * [ 1;0 ];
+            end
+        
+            inputDA = inputDA( 2, : ) ./ inputDA( 1, : );
+            sumInputDA = 1 + sum( inputDA, 2 );
+            outputDA = 1 ./ ( repmat( sumInputDA, [ 1, numTargets ] ) - inputDA );
+            probabilitiesNew( measurement ) = 1 ./ sumInputDA;
+        
+            if ( measurement == numMeasurements )
+                break ;
+            end
+        
+            for target = 1:numTargets
+                logWeights = log( ones( numParticles, 1 ) + likelihoods( :, target ) * outputDA( 1, target ) );
+                [ currentParticlesKinematicTmp( :, :, target ), currentParticlesExtentTmp( :, :, :, target ), currentExistencesTmp( target ) ] = updateParticles( currentParticlesKinematicTmp( :, :, target ), currentParticlesExtentTmp( :, :, :, target ), currentExistencesTmp( target ), logWeights, parameters );
+            end
+        end
+        
+        [ newIndexes, indexesReordered ] = getCentralReordered( measurements, probabilitiesNew, parameters );
+        
+        measurements = measurements( :, indexesReordered );
+        
+        end
+        '''
+
+    def getCentralReordered(self,measurements, probabilitiesNew):
+        '''
+        function [ centralIndexes, indexesReordered ] = getCentralReordered( measurements, probabilitiesNew, parameters )
+        threshold = parameters.freeThreshold;
+        clusterThreshold = parameters.clusterThreshold;
+        meanExtentBirth = ( parameters.priorExtent1 / ( parameters.priorExtent2 - 3 ) ) ^ 2;
+        measurementsCovariance = parameters.measurementVariance * eye( 2 ) + meanExtentBirth;
+        minClusterElements = parameters.minClusterElements;
+        
+        allIndexesNumeric = ( 1:size( measurements, 2 ) )';
+        
+        freeIndexes = probabilitiesNew >= threshold;
+        assignedIndexes = probabilitiesNew < threshold;
+        
+        measurementsFree = measurements( :, freeIndexes );
+        
+        freeIndexesNumeric = allIndexesNumeric( freeIndexes );
+        assignedIndexesNumeric = allIndexesNumeric( assignedIndexes );
+        
+        clusters = getClusters( measurementsFree, measurementsCovariance, clusterThreshold )';
+        
+        numElements = sum( clusters > 0, 1 );
+        [ numElements, indexes ] = sort( numElements, 'descend' );
+        clusters = clusters( :, indexes );
+        
+        notUsedIndexes = clusters( :, numElements < minClusterElements );
+        notUsedIndexes = nonzeros( notUsedIndexes( : ) );
+        notUsedIndexesNumeric = freeIndexesNumeric( notUsedIndexes );
+        numNotUsed = size( notUsedIndexesNumeric, 1 );
+        
+        clusters( :, numElements < minClusterElements ) = [  ];
+        indexesNumericNew = zeros( 0, 1 );
+        numClusters = size( clusters, 2 );
+        centralIndexes = zeros( numClusters, 1 );
+        for cluster = 1:numClusters
+        
+            indexes = nonzeros( clusters( :, cluster ) );
+            currentMeasurements = measurementsFree( :, indexes );
+        
+            currentIndexesNumeric = freeIndexesNumeric( indexes );
+        
+            if ( numel( indexes ) > 1 )
+                numMeasurements = size( indexes, 1 );
+                distanceMatrix = zeros( numMeasurements, numMeasurements );
+                for measurement1 = 1:numMeasurements
+                    for measurement2 = ( measurement1 + 1 ):numMeasurements
+                        distVector = currentMeasurements( :, measurement1 ) - currentMeasurements( :, measurement2 );
+        
+                        distanceMatrix( measurement1, measurement2 ) = sqrt( distVector' / measurementsCovariance * distVector );
+                        distanceMatrix( measurement2, measurement1 ) = distanceMatrix( measurement1, measurement2 );
+                    end
+                end
+        
+                distanceVector = sum( distanceMatrix, 2 );
+                [ ~, indexes ] = sort( distanceVector, 'descend' );
+                currentIndexesNumeric = currentIndexesNumeric( indexes );
+        
+            end
+            indexesNumericNew = [ currentIndexesNumeric;indexesNumericNew ];
+        
+            centralIndexes( 1:cluster ) = centralIndexes( 1:cluster ) + numMeasurements;
+        end
+        
+        indexesReordered = [ notUsedIndexesNumeric;indexesNumericNew;assignedIndexesNumeric ];
+        
+        centralIndexes = centralIndexes + numNotUsed;
+        centralIndexes = sort( centralIndexes, 'descend' );
+        end
+        
+        function [ clusters ] = getClusters( measurements, measurementsCovariance, thresholdProbability )
+        numMeasurements = size( measurements, 2 );
+        
+        if ( ~numMeasurements )
+            clusters = [  ];
+            return ;
+        end
+        
+        thresholdDistance = chi2inv( thresholdProbability, 2 );
+        
+        distanceVector = zeros( ( numMeasurements * ( numMeasurements - 1 ) / 2 + 1 ), 1 );
+        distanceMatrix = zeros( numMeasurements, numMeasurements );
+        entry = 1;
+        for measurement1 = 1:numMeasurements
+            for measurement2 = ( measurement1 + 1 ):numMeasurements
+                distVector = measurements( :, measurement1 ) - measurements( :, measurement2 );
+        
+                entry = entry + 1;
+                distanceVector( entry ) = sqrt( distVector' / measurementsCovariance * distVector );
+        
+                distanceMatrix( measurement1, measurement2 ) = distanceVector( entry );
+                distanceMatrix( measurement2, measurement1 ) = distanceVector( entry );
+            end
+        end
+        
+        distanceVector = sort( distanceVector );
+        distanceVector( distanceVector > thresholdDistance ) = [  ];
+        distance = distanceVector( end  );
+        
+        clusterNumbers = zeros( numMeasurements, 1 );
+        clusterId = 1;
+        for measurement = 1:numMeasurements
+            if ( clusterNumbers( measurement ) == 0 )
+                clusterNumbers( measurement ) = clusterId;
+                clusterNumbers = findNeighbors( measurement, clusterNumbers, clusterId, distanceMatrix, distance );
+                clusterId = clusterId + 1;
+            end
+        end
+        numClusters = clusterId - 1;
+        
+        maxElements = sum( clusterNumbers == mode( clusterNumbers ) );
+        clusters = zeros( 0, maxElements );
+        index = 0;
+        for cluster = 1:numClusters
+            associationTmp = find( clusterNumbers == cluster )';
+            numElements = numel( associationTmp );
+            if ( numElements <= maxElements )
+                index = index + 1;
+                clusters( index, : ) = [ zeros( 1, maxElements - numElements ), associationTmp ];
+            end
+        end
+        
+        end
+        
+        function [ cellNumbers ] = findNeighbors( index, cellNumbers, cellId, distanceMatrix, distanceThreshold )
+        numMeasurements = size( distanceMatrix, 2 );
+        
+        for measurement = 1:numMeasurements
+            if ( measurement ~= index && distanceMatrix( measurement, index ) < distanceThreshold && cellNumbers( measurement ) == 0 )
+                cellNumbers( measurement ) = cellId;
+                cellNumbers = findNeighbors( index, cellNumbers, cellId, distanceMatrix, distanceThreshold );
+            end
+        end
+        
+        end
+        '''
+
+
+
     def predict(self, updatedIntensity):
         '''
         [currentParticlesKinematic,currentExistences,currentParticlesExtent] = performPrediction(currentParticlesKinematic,currentExistences,currentParticlesExtent,scanTime,parameters);    
@@ -41,12 +225,93 @@ class SPA_Filter:
         currentLabels = cat(2,currentLabels,[step*ones(1,numNew);newIndexes']);
         '''
 
-        
-
-
-
     def predict_for_initial_step(self):
+        pass
 
+
+    def getWeightsUnknown(logWeights,oldExistence,skipIndex):
+        '''
+        function [weights,updatedExistence] = getWeightsUnknown(logWeights,oldExistence,skipIndex)
+
+        if(skipIndex)
+            logWeights(:,skipIndex) = zeros(size(logWeights,1),1);
+        end
+        
+        logWeights = sum(logWeights,2);
+        
+        aliveUpdate = mean(exp(logWeights),1);
+        if(isinf(aliveUpdate))
+            updatedExistence = 1;
+        else
+            alive = oldExistence * aliveUpdate;
+            dead = (1 - oldExistence);
+            updatedExistence = alive / (dead + alive);
+        end
+        
+        weights = exp(logWeights - max(logWeights));
+        weights = 1/sum(weights,1) * weights;
+        
+        end
+        
+        '''
+    def resampleSystematic(weights,numParticles):
+        '''
+        function indexes = resampleSystematic(weights,numParticles)
+        indexes = zeros(numParticles,1);
+        cumWeights = cumsum(weights);
+        
+        grid = zeros(1,numParticles+1);
+        grid(1:numParticles) = linspace(0,1-1/numParticles,numParticles) + rand/numParticles;
+        grid(numParticles+1) = 1;
+        
+        i = 1;
+        j = 1;
+        while( i <= numParticles )
+            if( grid(i) < cumWeights(j) )
+                indexes(i) = j;
+                i = i + 1;
+            else
+                j = j + 1;
+            end
+        end
+        end
+        '''
+
+
+    def updateParticles(self, oldParticlesKinematic,oldParticlesExtent,oldExistence,logWeights):
+        '''
+        function [updatedParticlesKinematic,updatedParticlesExtent,updatedExistence] = updateParticles(oldParticlesKinematic,oldParticlesExtent,oldExistence,logWeights,parameters)
+        numParticles = parameters.numParticles;
+        regularizationDeviation = parameters.regularizationDeviation;
+        
+        
+        logWeights = sum(logWeights,2);
+        
+        aliveUpdate = mean(exp(logWeights),1);
+        if(isinf(aliveUpdate))
+            updatedExistence = 1;
+        else
+            alive = oldExistence*aliveUpdate;
+            dead = (1-oldExistence);
+            updatedExistence = alive/(dead+alive);
+        end
+        
+        if(updatedExistence ~= 0)
+            logWeights = logWeights-max(logWeights);
+            weights = exp(logWeights);
+            weightsNormalized = 1/sum(weights)*weights;
+            
+            indexes = resampleSystematic(weightsNormalized,numParticles);
+            updatedParticlesKinematic = oldParticlesKinematic(:,indexes);
+            updatedParticlesExtent = oldParticlesExtent(:,:,indexes);
+            
+            updatedParticlesKinematic(1:2,:) = updatedParticlesKinematic(1:2,:) + regularizationDeviation * randn(2,numParticles);
+        else
+            updatedParticlesKinematic = nan(size(oldParticlesKinematic));
+            updatedParticlesExtent = nan(size(oldParticlesExtent));
+        end
+        end
+        '''
 
     def update(self, Z_k, predictedIntensity):
         '''
@@ -199,152 +464,3 @@ class SPA_Filter:
         currentExistences = currentExistences(~isRedundant);
         '''
         pass
-
-    def loopy_belief_propogation(self,Z_k,updatedIntensity):
-        '''
-        #function [pupd,pnew] = lbp(wupd,wnew)
-        #LBP: LOOPY BELIEF PROPAGATION APPROXIMATION OF MARGINAL ASSOCIATION PROBABILITIES
-        #Syntax: [pupd,pnew] = lbp(wupd,wnew)
-        #Input:
-        # wupd(i,j+1) is PDA likelihood for track i/measurment j 
-        #  e.g., P_d N(z_jH*mu_i,H*P_i*H'+R)
-        # wupd(i,1) is miss likelihood for target i
-        #  e.g., (1-P_d)
-        # wnew(j) is false alarm/new target intensity for measurement j
-        #  e.g., lambda_fa(z_j) + lambda^u(z_j)
-        #Output:
-        # Estimates of marginal association probabilities in similar format.
-        '''        
-        if len(updatedIntensity['wupd'])>0:
-            length_of_existing_track = len(updatedIntensity['wupd'])
-            length_of_measurements_and_miss = len(updatedIntensity['wupd'][0])
-            length_of_measurements=length_of_measurements_and_miss-1
-    
-            #[n,mp1] = size(wupd)
-            #m = mp1-1
-            # wupd dimensions n x m+1
-            # wnew dimensions m x 1
-            # pupd, pnew dimensions same
-            
-            eps_conv_threshold = 1e-8
-            
-            mu = np.ones((length_of_existing_track,length_of_measurements)) # mu_ba
-            mu_old = np.zeros((length_of_existing_track,length_of_measurements))
-            nu = np.zeros((length_of_existing_track,length_of_measurements)) # mu_ab
-            #nu =[]
-            pupd = np.zeros((length_of_existing_track,length_of_measurements_and_miss))
-                                 
-            
-            # Run LBP iteration
-            while np.max(abs(mu-mu_old)) > eps_conv_threshold:
-              mu_old = mu
-              
-              for i in range(length_of_existing_track):
-                prd=[]
-                for j in range(length_of_measurements):
-                    prd.append(updatedIntensity['wupd'][i][j+1]*mu[i][j])
-                s = updatedIntensity['wupd'][i][0] + sum(prd)
-
-                for j in range(length_of_measurements):
-                    nu[i][j]=updatedIntensity['wupd'][i][j+1]/(s-prd[j])         
-              
-              for k in range(length_of_measurements):
-                s = updatedIntensity['wnew'][k] + sum(nu[:,k])
-                for z in range(length_of_existing_track):
-                    mu[z][k] = 1/(s - nu[z][k])
-        
-            # Calculate outputs--for existing tracks then for new tracks
-            for i in range(length_of_existing_track):
-                #for k in range(length_of_measurements):
-                #    pred2.append(updatedIntensity['wupd'][i][k+1]*mu[i][k])
-                #s = updatedIntensity['wupd'][i][0] + sum(pred2)
-                s = updatedIntensity['wupd'][i][0] + np.dot(updatedIntensity['wupd'][i][1:],mu[i])
-                pupd[i][0] = updatedIntensity['wupd'][i][0]/s
-                for j in range(length_of_measurements):  
-                    pupd[i][j+1] = updatedIntensity['wupd'][i][j+1]*mu[i][j]/s
-        else:
-            pupd=[]
-            nu=np.zeros((1,len(Z_k)))
-        
-        pnew = [] 
-        for k in range(len(Z_k)):
-            s = updatedIntensity['wnew'][k] + sum(nu[:,k])
-            pnew.append(updatedIntensity['wnew'][k]/s)
-        return pupd,pnew
-
-    def tomb(self, pupd, pnew, updatedIntensity):
-        '''
-        TOMB: TOMB ALGOIRHTM FOR FORMING NEW MULTI-BERNOULLI COMPONENTS
-        #Syntax: [r,x,P] = tomb(pupd,rupd,xupd,Pupd,pnew,rnew,xnew,Pnew)
-        #Input:
-        # pupd(i,j+1) is association probability (or estimate) for measurement
-        #  j/track i
-        # rupd(i,j+1), xupd(:,i,j+1) and Pupd(:,:,i,j+1) give the probability of
-        #  existence, state estimate and covariance for this association hypothesis
-        # pupd(i,1) is miss probability (or estimate) for target i
-        # rupd(i,1), xupd(:,i,1) and Pupd(:,:,i,1) give the probability of
-        #  existence, state estimate and covariance for this miss hypothesis
-        # pnew(j) is the probability (or estimate thereof) that measurement j does
-        #  not associate with any prior component and is therefore a false alarm or
-        #  a new target
-        # rnew(j), xnew(:,j) and Pnew(:,:,j) give the probability of existence, 
-        #  state estimate and covariance for this new target multi-Bernoulli
-        #  component
-        #Output:
-        # r(i), x(:,i) and P(:,:,i) give the probability of existence, state 
-        # estimate and covariance for the i-th multi-Bernoulli  component
-        ''' 
-        
-        r_threshold = 1e-4
-        r=[]
-        x=[]
-        #P=np.zeros((length_of_existing_tracks_plus_new_tracks,stateDimensions,stateDimensions))
-        P=[]
-        if len(pupd)>0:
-            # Infer sizes
-            length_of_existing_tracks=len(pupd)
-            length_of_measurements_and_miss =len(pupd[0])
-            stateDimensions = len(updatedIntensity['xnew'][0])
-            length_of_measurements = length_of_measurements_and_miss-1
-            length_of_existing_tracks_plus_new_tracks = length_of_existing_tracks + length_of_measurements
-            
-            # Form continuing tracks
-            for i in range(length_of_existing_tracks):
-                pr=[]
-                for j in range(length_of_measurements_and_miss):
-                    pr.append(pupd[i][j]*updatedIntensity['rupd'][i][j])
-                r.append(sum(pr))
-                pr = pr/sum(pr)
-                x.append(np.zeros((stateDimensions,1)))
-                P.append(np.zeros((stateDimensions,stateDimensions)))
-                for k in range(length_of_measurements_and_miss):
-                    x[i]+=pr[k]*updatedIntensity['xupd'][i][k]
-                
-                for k in range(length_of_measurements_and_miss):
-                    v = x[i] - updatedIntensity['xupd'][i][k]
-                    P[i]+= pr[k]*(updatedIntensity['Pupd'][i][k] + v*np.transpose(v))
-                
-        else:
-            length_of_existing_tracks_plus_new_tracks = len(updatedIntensity['rnew'])
-                
-        # Form new tracks (already single hypothesis)
-        for k in range(len(updatedIntensity['rnew'])):
-            r.append(pnew[k]* updatedIntensity['rnew'][k])
-            x.append(updatedIntensity['xnew'][k])
-            P.append(updatedIntensity['Pnew'][k])
-        
-        # Truncate tracks with low probability of existence (not shown in algorithm)
-        r_extract=[]
-        x_extract=[]
-        P_extract=[]
-        for i in range(length_of_existing_tracks_plus_new_tracks):
-            if r[i] > r_threshold:
-                r_extract.append(r[i])
-                x_extract.append(x[i])
-                P_extract.append(P[i])
-     
-        updatedIntensity['rupd']=r_extract
-        updatedIntensity['xupd']=x_extract
-        updatedIntensity['Pupd']=P_extract
-     
-        return r_extract,x_extract,P_extract, updatedIntensity
