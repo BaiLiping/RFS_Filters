@@ -1,0 +1,3 @@
+[submodule "simulation/SPA/simulation/SPA/EOT-BP"]
+	path = simulation/SPA/simulation/SPA/EOT-BP
+	url = git@github.com:BaiLiping/EOT-BP.git
