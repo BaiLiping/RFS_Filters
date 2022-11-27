@@ -27,7 +27,14 @@ constantFactor = areaSize*(meanMeasurements/meanClutter);
 probabilityEffectiveDetect = 1-exp(-meanMeasurements);
 uniformWeight = log(1/areaSize);
 
+% this is actually a dictionary for the multiBernoulli datastructure
+% the dictionary has 5 keys, mark, which would be the track label
+% particleWeights the weight of each particles
+% existence probability
+% particleKinematics, which is the state of the particle
+% particleExtent, this is shape information
 multiBernoulli = repmat(struct('mark',[],'existence',[],'particleWeights',[],'particlesKinematic',[],'particlesExtent',[]),[0,1]);
+
 PoissonPointProcess.meanNumOfUndetectedObject = 0;
 
 trajectoryMetric.total = zeros(numSteps,1);
@@ -80,6 +87,7 @@ for step = 1:numSteps
         newMultiBernoulli(target).particleWeights = exp(normalizeLogWeights(uniformWeight-log_mvnpdf(reshape(newMultiBernoulli(target).particlesKinematic(1:2,:),2,numNewBornParticles)', proposalMean', proposalCovariance')));
         aliveProbability = PoissonPointProcess.meanNumOfUndetectedObject*(1-probabilityEffectiveDetect);
         newMultiBernoulli(target).existence = aliveProbability/(aliveProbability+1);
+        % the label assignment is not applicable to the real dataset
         newMultiBernoulli(target).mark = [step;newIndexes(target)];
     end
 

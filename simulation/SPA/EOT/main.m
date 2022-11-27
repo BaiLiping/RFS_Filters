@@ -68,5 +68,5 @@ toc
 
 
 % show results
-mode = 1; %hit ``space'' to start visualization; set mode=0 for final result and mode=2 to frame-by-frame.
+mode = 2; %hit ``space'' to start visualization; set mode=0 for final result and mode=2 to frame-by-frame.
 showResults(targetTracks,targetExtents,estimatedTracks,estimatedExtents,measurements,[-150 150 -150 150],mode);

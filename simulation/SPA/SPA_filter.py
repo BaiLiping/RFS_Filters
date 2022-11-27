@@ -26,6 +26,62 @@ class SPA_Filter:
             so we employee Bayesian filter(e.g. Kalman, as now the motion model is just constant velocity(CV) motion model.) 
             to filtering the parameters of Gaussian mixture PHD.
     """
+
+    def getLogWeightsFast(measurement,currentParticlesKinematic,currentParticlesExtent):
+        '''
+        function logWeights = getLogWeightsFast(measurement,currentParticlesKinematic,currentParticlesExtent)
+        numParticles = size(currentParticlesExtent,3);
+        
+        allDeterminantes = permute(currentParticlesExtent(1,1,:).*currentParticlesExtent(2,2,:) - currentParticlesExtent(1,2,:).^2,[3,1,2]);
+        allFactors = log(1./(2*pi*sqrt(allDeterminantes)));
+        
+        measurementsReptition = repmat(measurement,[1,numParticles]);
+        
+        part2 = ( measurementsReptition - currentParticlesKinematic(1:2,:) )';
+        
+        % direct calculation of innovation vector times inverted covariance matrix
+        tmp = 1./repmat(allDeterminantes,[1,2]) .* (measurementsReptition' - currentParticlesKinematic(1:2,:)');
+        part1(:,1) = tmp(:,1) .* squeeze(currentParticlesExtent(2,2,:)) - tmp(:,2) .* squeeze(currentParticlesExtent(2,1,:));
+        part1(:,2) = - tmp(:,1) .* squeeze(currentParticlesExtent(1,2,:)) + tmp(:,2) .* squeeze(currentParticlesExtent(1,1,:));
+        
+        logWeights = allFactors + ( -1/2*(part1(:,1).*part2(:,1) + part1(:,2).*part2(:,2)) );
+        end
+        '''
+    def updateParticles(self, oldParticlesKinematic,oldParticlesExtent,oldExistence,logWeights):
+        '''
+        function [updatedParticlesKinematic,updatedParticlesExtent,updatedExistence] = updateParticles(oldParticlesKinematic,oldParticlesExtent,oldExistence,logWeights,parameters)
+        numParticles = parameters.numParticles;
+        regularizationDeviation = parameters.regularizationDeviation;
+        
+        
+        logWeights = sum(logWeights,2);
+        
+        aliveUpdate = mean(exp(logWeights),1);
+        if(isinf(aliveUpdate))
+            updatedExistence = 1;
+        else
+            alive = oldExistence*aliveUpdate;
+            dead = (1-oldExistence);
+            updatedExistence = alive/(dead+alive);
+        end
+        
+        if(updatedExistence ~= 0)
+            logWeights = logWeights-max(logWeights);
+            weights = exp(logWeights);
+            weightsNormalized = 1/sum(weights)*weights;
+            
+            indexes = resampleSystematic(weightsNormalized,numParticles);
+            updatedParticlesKinematic = oldParticlesKinematic(:,indexes);
+            updatedParticlesExtent = oldParticlesExtent(:,:,indexes);
+            
+            updatedParticlesKinematic(1:2,:) = updatedParticlesKinematic(1:2,:) + regularizationDeviation * randn(2,numParticles);
+        else
+            updatedParticlesKinematic = nan(size(oldParticlesKinematic));
+            updatedParticlesExtent = nan(size(oldParticlesExtent));
+        end
+        end
+        '''
+
     def getPromisingNewTarget(self, currentParticlesKinematicTmp, currentExistencesTmp, measurements):
         '''
         function [ newIndexes, measurements ] = getPromisingNewTargets( currentParticlesKinematicTmp, currentParticlesExtentTmp, currentExistencesTmp, measurements, parameters )
@@ -271,41 +327,6 @@ class SPA_Filter:
             else
                 j = j + 1;
             end
-        end
-        end
-        '''
-
-    def updateParticles(self, oldParticlesKinematic,oldParticlesExtent,oldExistence,logWeights):
-        '''
-        function [updatedParticlesKinematic,updatedParticlesExtent,updatedExistence] = updateParticles(oldParticlesKinematic,oldParticlesExtent,oldExistence,logWeights,parameters)
-        numParticles = parameters.numParticles;
-        regularizationDeviation = parameters.regularizationDeviation;
-        
-        
-        logWeights = sum(logWeights,2);
-        
-        aliveUpdate = mean(exp(logWeights),1);
-        if(isinf(aliveUpdate))
-            updatedExistence = 1;
-        else
-            alive = oldExistence*aliveUpdate;
-            dead = (1-oldExistence);
-            updatedExistence = alive/(dead+alive);
-        end
-        
-        if(updatedExistence ~= 0)
-            logWeights = logWeights-max(logWeights);
-            weights = exp(logWeights);
-            weightsNormalized = 1/sum(weights)*weights;
-            
-            indexes = resampleSystematic(weightsNormalized,numParticles);
-            updatedParticlesKinematic = oldParticlesKinematic(:,indexes);
-            updatedParticlesExtent = oldParticlesExtent(:,:,indexes);
-            
-            updatedParticlesKinematic(1:2,:) = updatedParticlesKinematic(1:2,:) + regularizationDeviation * randn(2,numParticles);
-        else
-            updatedParticlesKinematic = nan(size(oldParticlesKinematic));
-            updatedParticlesExtent = nan(size(oldParticlesExtent));
         end
         end
         '''
