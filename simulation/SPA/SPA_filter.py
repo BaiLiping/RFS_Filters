@@ -208,8 +208,6 @@ class SPA_Filter:
         end
         '''
 
-
-
     def predict(self, updatedIntensity):
         '''
         [currentParticlesKinematic,currentExistences,currentParticlesExtent] = performPrediction(currentParticlesKinematic,currentExistences,currentParticlesExtent,scanTime,parameters);    
@@ -276,7 +274,6 @@ class SPA_Filter:
         end
         end
         '''
-
 
     def updateParticles(self, oldParticlesKinematic,oldParticlesExtent,oldExistence,logWeights):
         '''
