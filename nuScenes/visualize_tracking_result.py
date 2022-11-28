@@ -288,7 +288,7 @@ def main(token, out_file_directory_for_this_experiment):
     with open(dataset_info_file, 'rb') as f:
         dataset_info=json.load(f)
 
-    with open('/home/bailiping/Desktop/PMB_val_submission.json', 'rb') as f:
+    with open('/home/bailiping/Desktop/MHT_val_submission.json', 'rb') as f:
         result_meta=json.load(f)
     tracking_result_all=result_meta['results']
     inference_track_record=gen_track_record(tracking_result_all, args.data_version)
