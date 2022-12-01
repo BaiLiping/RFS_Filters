@@ -22,7 +22,7 @@ parameters.meanBirths = .01;
 parameters.surveillanceRegion = [[-200; 200] [-200; 200]];
 parameters.measurementVariance = 1^2;
 parameters.meanMeasurements = 8;
-parameters.meanClutter = 10;
+parameters.meanClutter = 1;
 
 
 % prior distribution parameters
@@ -34,18 +34,16 @@ parameters.degreeFreedomPrediction = 20000;
 % censoring and measurement reordering parameters
 parameters.freeThreshold = .85;
 parameters.clusterThreshold = 0.9;
-parameters.minClusterElements = 2;
+parameters.minClusterElements = 1;
 
 % sampling parameters
 parameters.numParticles = 5000;
 parameters.regularizationDeviation = 0;
 
-
 % detection and pruning parameters
 parameters.detectionThreshold = .5;
 parameters.thresholdPruning = 10^(-3);
 parameters.minimumTrackLength = 1;
-
 
 % message passing parameters
 parameters.numOuterIterations = 2;

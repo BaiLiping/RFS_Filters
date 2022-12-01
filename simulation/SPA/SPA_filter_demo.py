@@ -1,17 +1,4 @@
-"""
-%% ----------------------- Run Gaussian Mixture(GM) Probability Hypothesis Density(PHD) filter ---------------------- %%
-This is script which runs "point target GM-PHD filter" originally proposed in paper [1], with assumption
-of no target spawning.
-
-%% ----------------------------------- Reference Papers ------------------------------------------ %%
-% [1] 2006. B.-N. Vo, W.-K. Ma, "The Gaussian Mixture Probability Hypothesis Density Filter", IEEE Transactions on Signal
-Processing
-"""
-"""
-The current version of this code, is updated in 20210810.
-"""
-
-from simulation.SPA.SPA_filter import PMB_Filter
+from simulation.SPA.SPA_filter import SPA_Filter
 from util import parse_args, gen_ground_truth_parameters, gen_filter_model, gen_simulation,filter_plot,plot_gospa
 from matplotlib import pyplot as plt
 import time
@@ -31,7 +18,7 @@ def main(args):
     
     # Initiate filter
     filter_model = gen_filter_model()
-    Filter = PMB_Filter(filter_model, args.Bayesian_filter_config, args.motion_model_type)
+    Filter = SPA_Filter(filter_model, args.Bayesian_filter_config, args.motion_model_type)
     existThresh = 0.8
     for ith_simulation in range(args.number_of_monte_carlo_simulations):        
         # generate information for this simulation

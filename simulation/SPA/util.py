@@ -145,6 +145,36 @@ def gen_filter_model():
     % message passing parameters
     parameters.numOuterIterations = 2;
     '''
+    filter_model['accelerationDeviation'] = 1
+    filter_model['survivalProbability'] = 0.99
+    filter_model['meanBirths'] = .01
+    filter_model['measurementVariance'] = 1^2
+    filter_model['meanMeasurements'] = 8
+    filter_model['meanClutter'] = 10
+    
+    # prior distribution parameters
+    filter_model['priorVelocityCovariance'] = np.diag(10^2,10^2)
+    filter_model['priorExtent2'] = 100                      
+    #filter_model['priorExtent1'] = [[meanTargetDimension 0];[0 meanTargetDimension]]*(filter_model['priorExtent2-3);
+    filter_model['degreeFreedomPrediction'] = 20000
+    
+    # censoring and measurement reordering parameters
+    filter_model['freeThreshold'] = .85
+    filter_model['clusterThreshold'] = 0.9
+    filter_model['minClusterElements'] = 2
+    
+    # sampling parameters
+    filter_model['numParticles'] = 5000
+    filter_model['regularizationDeviation'] = 0
+    
+    # detection and pruning parameters
+    filter_model['detectionThreshold'] = .5
+    filter_model['thresholdPruning'] = 10^(-3)
+    filter_model['minimumTrackLength'] = 1
+    
+    
+    # message passing parameters
+    filter_model['numOuterIterations'] = 2
 
 
     filter_model['F_k'] = np.eye(4, dtype=np.float64)
