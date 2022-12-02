@@ -223,12 +223,7 @@ class SPA_Filter:
     def getPromisingNewTarget(self, currentParticlesKinematicTmp, currentExistencesTmp, measurements):
         numMeasurements = len(measurements)
         numParticles = len(currentParticlesKinematicTmp)
-        measurementsCovariance = self.filter_model['measurementVariance'] * np.eye( 2 )
-        surveillanceRegion = self.filter_model['surveillanceRegion']
-        areaSize = ( surveillanceRegion( 2, 1 ) - surveillanceRegion( 1, 1 ) ) * ( surveillanceRegion( 2, 2 ) - surveillanceRegion( 1, 2 ) )
-        meanMeasurements = self.filter_model['meanMeasurements']
-        meanClutter = self.filter_model['meanClutter']
-        constantFactor = areaSize * ( meanMeasurements / meanClutter )
+
         
         probabilitiesNew = np.ones(numMeasurements)
         for measurement in range(numMeasurements):
@@ -248,7 +243,7 @@ class SPA_Filter:
                 
             for target in range(numTargets):
                 logWeights = np.log(np.ones( numParticles) + likelihoods( :, target) * outputDA( 1, target ))
-                currentParticlesKinematicTmp[target], currentParticlesExtentTmp[target], currentExistencesTmp[target] = updateParticles(currentParticlesKinematicTmp( :, :, target ), currentParticlesExtentTmp( :, :, :, target ), currentExistencesTmp( target ), logWeights, parameters )
+                currentParticlesKinematicTmp[target], currentParticlesExtentTmp[target], currentExistencesTmp[target] = self.updateParticles(currentParticlesKinematicTmp( :, :, target ), currentParticlesExtentTmp( :, :, :, target ), currentExistencesTmp( target ), logWeights, parameters )
         
         newIndexes, indexesReordered = getCentralReordered( measurements, probabilitiesNew, parameters )
         
@@ -418,22 +413,20 @@ class SPA_Filter:
                 # calculate extrinsic information for legacy targets (at all except last iteration) and belief (at last iteration)
                 if outer != self.filter_model['numOuterIterations']:
                     for measurement in range(numMeasurements):
-                        [weightsExtrinsic(:,measurement,target),currentExistencesExtrinsic(target,measurement)] = getWeightsUnknown(weights,currentExistences(target),measurement);
-                    end
-                else
-                    [currentParticlesKinematic(:,:,target),currentParticlesExtent(:,:,:,target),currentExistences(target)] = updateParticles(currentParticlesKinematic(:,:,target),currentParticlesExtent(:,:,:,target),currentExistences(target),weights,parameters)
+                        weightsExtrinsic[measurement][target],currentExistencesExtrinsic[target][measurement] = self.getWeightsUnknown(weights,currentExistences[target],measurement)
+                else:
+                    currentParticlesKinematic[target],currentParticlesExtent[target],currentExistences[target] = self.updateParticles(currentParticlesKinematic[target],currentParticlesExtent[target],currentExistences[target],weights)
             
             # perform update step for new targets
-            targetIndex = numLegacy;
-            for target = numMeasurements:-1:1
-                if(any(target == newIndexes))
-                    
-                    targetIndex = targetIndex + 1;
-                    weights = zeros(size(currentParticlesKinematic,2),numMeasurements+1);
-                    weights(:,numMeasurements+1) = newWeights(:,targetIndex-numLegacy);
-                    for measurement = 1:target
-                        
-                        outputTmpDA = outputDA{measurement}(1,targetIndexes{measurement}==target);
+            targetIndex = numLegacy
+            #for target = numMeasurements:-1:1
+            for target in range(numMeasurements):
+                if target in newIndexes:
+                    targetIndex = targetIndex + 1
+                    weights = np.zeros((len(currentParticlesKinematic),numMeasurements+1))
+                    weights[numMeasurements+1] = newWeights[targetIndex-numLegacy]
+                    for measurement in range(target):
+                        outputTmpDA = outputDA{measurement}(1,targetIndexes{measurement}==target)
                         
                         if(~isinf(outputTmpDA))
                             currentWeights = likelihoodNew1(:,measurement,targetIndex-numLegacy) * outputTmpDA;

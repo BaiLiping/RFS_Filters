@@ -176,6 +176,10 @@ def gen_filter_model():
     # message passing parameters
     filter_model['numOuterIterations'] = 2
 
+    filter_model['surveillanceRegion'] = [[0, 300] [0, 300]]
+    filter_model['measurementVariance'] = filter_model['measurementVariance'] * np.eye( 2 )
+    filter_model['areaSize'] = (filter_model['surveillanceRegion'][1][0] - filter_model['surveillanceRegion'][0][0]) * (filter_model['surveillanceRegion'][1][1] - filter_model['surveillanceRegion'][0][1])
+    filter_model['constantFactor'] = filter_model['areaSize'] * ( filter_model['meanMeasurements'] / filter_model['meanClutter'] )
 
     filter_model['F_k'] = np.eye(4, dtype=np.float64)
     I = T*np.eye(2, dtype=np.float64)
