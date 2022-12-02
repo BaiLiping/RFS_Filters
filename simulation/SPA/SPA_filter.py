@@ -17,14 +17,14 @@ class SPA_Filter:
         self.model = model # use generated model which is configured for all parameters used in GM-PHD filter model for tracking the multi-targets.
         self.bayesian_filter_type = bayesian_filter_type # Bayesian filter type, i.e. Kalman, EKF, Particle filter
         self.motion_model_type = motion_model_type # Motion model type, i.e. Constant Velocity(CV), Constant Accelaration(CA), Constant Turning(CT), Interacting Multiple Motion Model(IMM)
-
-    def getLogWeightsFast(measurement,currentParticlesKinematic,currentParticlesExtent):
+    '''
+    def getLogWeights(measurement,currentParticlesKinematic,currentParticlesExtent):
         numParticles = len(currentParticlesExtent)
         
         allDeterminantes = permute(currentParticlesExtent(1,1,:).*currentParticlesExtent(2,2,:) - currentParticlesExtent(1,2,:).^2,[3,1,2])
         allFactors = np.log(1./(2*math.pi*math.sqrt(allDeterminantes)))
         
-        measurementsReptition = repmat(measurement,[1,numParticles])
+        measurementsReptition = [measurement,[1,numParticles])
         
         part2 = ( measurementsReptition - currentParticlesKinematic(1:2,:) )'
         
@@ -36,6 +36,7 @@ class SPA_Filter:
         logWeights = allFactors + ( -1/2*(part1(:,1).*part2(:,1) + part1(:,2).*part2(:,2)) )
         
         return logWeights
+    '''
 
     def resampleSystematic(weights,numParticles):
         indexes = np.zeros(numParticles)
@@ -58,6 +59,7 @@ class SPA_Filter:
 
     def getCentralReordered(self,measurements, probabilitiesNew):
         '''
+        Original:
         function [ centralIndexes, indexesReordered ] = getCentralReordered( measurements, probabilitiesNew, parameters )
         threshold = parameters.freeThreshold;
         clusterThreshold = parameters.clusterThreshold;
@@ -192,6 +194,10 @@ class SPA_Filter:
         end
         '''
 
+        # this function is used to convert the original 
+        # if there are measurements that are overlapping, then only take the one with the highest score
+        pass
+
     def updateParticles(self, oldParticlesKinematic,oldParticlesExtent,oldExistence,logWeights):
         numParticles = self.filter_model['numParticles']
         regularizationDeviation = self.filter_model['regularizationDeviation']
@@ -209,7 +215,6 @@ class SPA_Filter:
             logWeights = logWeights-max(logWeights)
             weights = np.exp(logWeights)
             weightsNormalized = 1/sum(weights)*weights
-            
             indexes = self.resampleSystematic(weightsNormalized,numParticles)
             updatedParticlesKinematic = oldParticlesKinematic[indexes]
             updatedParticlesExtent = oldParticlesExtent[indexes]
@@ -308,7 +313,56 @@ class SPA_Filter:
 
 
         return a
+
+    def performPrediction(self, oldParticles, oldExistences, oldExtents):
+        '''
+        function [newParticles, newExistences, newExtents] = performPrediction( oldParticles, oldExistences, oldExtents, scanTime, parameters )
+        [~,numParticles,numTargets] = size(oldParticles);
+        drivingNoiseVariance = parameters.accelerationDeviation^2;
+        survivalProbability = parameters.survivalProbability;
+        degreeFreedomPrediction = parameters.degreeFreedomPrediction;
         
+        [A, W] = getTransitionMatrices(scanTime);
+        newParticles = oldParticles;
+        newExistences = oldExistences;
+        newExtents = oldExtents;
+        
+        for target = 1:numTargets
+            oldExtents(:,:,:,target) = oldExtents(:,:,:,target)/degreeFreedomPrediction;
+            newExtents(:,:,:,target) = wishrndFastVector(oldExtents(:,:,:,target),degreeFreedomPrediction,numParticles);
+        end
+        
+        for target = 1:numTargets
+            newParticles(:,:,target) = A*oldParticles(:,:,target) + W*sqrt(drivingNoiseVariance)*randn(2,numParticles);
+            newExistences(target) = survivalProbability*oldExistences(target);
+        end
+        
+        end
+        
+
+        '''
+
+        ~,numParticles,numTargets = oldParticles.shape
+        drivingNoiseVariance = pow(self.filter_model['accelerationDeviation'],2)
+        survivalProbability = self.filter_model['survivalProbability']
+        degreeFreedomPrediction = self.filter_model['degreeFreedomPrediction']
+        # construct transition matrix
+        A=np.eye(4)
+        A[0][2]=self.filter_model['T']
+        A[1][3]=self.filter_model['T']
+
+        W=np.zeros((2,4))
+        W[0][0]=0.5*pow(self.filter_model['T'],2)
+        W[1][1]=0.5*pow(self.filter_model['T'],2)
+        W[2][0]=self.filter_model['T']
+        W[3][1]=self.filter_model['T']
+
+        # waht is the size of the target exactly?
+
+        for target_index in range(numTargets):
+            newParticles[target_index]=A*oldParticles[target_index]+W*math.sqrt(drivingNoiseVariance)*np.random.normal(size=(numParticles, 2))
+        
+        return newParticles, newExistences, newExtents
 
     def predict(self, currentParticlesKinematic, currentParticlesExtent, measurement):
         currentAlive = [i*np.exp(-self.filter_model['meanMeasurements']) for i in currentExistences]
@@ -316,20 +370,6 @@ class SPA_Filter:
         currentExistences = [currentAlive_i/(currentDead_i+currentAlive_i) for currentAlive_i, currentDead_i in zip(currentAlive, currentDead)]
         numTargets = len(currentParticlesKinematic)
         numLegacy = numTargets
-
-        return currentParticlesKinematic,currentExistences,currentParticlesExtent
-
-    def predict_for_initial_step(self,currentParticlesKinematic, currentParticlesExtent, measurement):
-        currentExistences=[1 for i in range(len(measurement))]
-        currentAlive = [i*np.exp(-self.filter_model['meanMeasurements']) for i in currentExistences]
-        currentDead = [1-i for i in currentExistences]
-        currentExistences = [currentAlive_i/(currentDead_i+currentAlive_i) for currentAlive_i, currentDead_i in zip(currentAlive, currentDead)]
-        numTargets = len(currentParticlesKinematic)
-        numLegacy = numTargets
-       
-        return currentParticlesKinematic,currentExistences,currentParticlesExtent
-
-    def update(self, measurement, currentParticlesKinematic,currentExistences,currentParticlesExtent):
 
         # get indexes of promising new objects 
         newIndexes,measurements = self.getPromisingNewTargets(currentParticlesKinematic,currentParticlesExtent,currentExistences,measurements)
@@ -344,7 +384,7 @@ class SPA_Filter:
             proposalMean = measurements[newIndexes(target)]
             proposalCovariance = 2 * self.filter_model['totalCovariance'] # strech covariance matrix to make proposal distribution heavier-tailed than target distribution
             newParticlesKinematic[target] = proposalMean + sqrtm(proposalCovariance) * np.randn(2,self.filter_model['numParticles'])
-            newWeights[target] = self.filter_model['uniformWeight'] - np.log(mvnpdf(newParticlesKinematic(1:2,:,target)', proposalMean', proposalCovariance))
+            newWeights[target] =  - np.log(mvnpdf(newParticlesKinematic(1:2,:,target)', proposalMean', proposalCovariance))
             newParticlesExtent[target] = self.iwishrndFastVector(self.filter_model['priorExtent1'],self.filter_model['priorExtent2'],self.filter_model['numParticles'])
         numMeasurements=len(measurement)
         numParticles=self.filter_model['numParticles']
@@ -354,7 +394,49 @@ class SPA_Filter:
         
         currentParticlesKinematic = np.hstack(currentParticlesKinematic,newParticlesKinematic)
         currentParticlesExtent = np.hstack(currentParticlesExtent,newParticlesExtent)
-        
+
+
+        return currentParticlesKinematic,currentExistences,currentParticlesExtent
+
+    def predict_for_initial_step(self,Z_k):
+        # the initial step, each measurement would be treated as new track
+
+        # for each track, there are numParticles of particles associated with it
+        numMeasurements= len(Z_k)
+        numParticles=self.filter_model['numParticles']
+        newParticlesKinematic=[[] for j in range(numMeasurements)] #[numTarget, numParticle, dim=4] at the initial step, numTarget=0
+        newParticlesExtent=[[] for j in range(numMeasurements)] #[numTarget, numParticle, dim=[2,2]] at the initial step, numTarget=0
+        newExistences = [1 for i in range(numMeasurements)]
+        newWeights = np.zeros[[] for i in range(numMeasurements)]
+
+        for new_target_index in range(numMeasurements):
+            # read out the state variables
+            proposalMean = Z_k[new_target_index] 
+            # strech covariance matrix to make proposal distribution heavier-tailed than target distribution
+            proposalCovariance = 2 * filter_model['totalCovariance'] 
+            # add random noise to the proposed mean
+            newParticlesKinematic[new_target_index] = [proposalMean+math.sqrt(proposalCovariance)*np.random.normal(2) for i in range(numParticles)]
+            # get weight based on the particle position
+            newWeights[new_target_index]=[self.filter_model['uniformWeight'] - np.log(mvnpdf(proposalMean[:2], newParticlesKinematic[new_target_index][i], proposalCovariance) for i in range(numParticles))]
+            newParticlesExtent[new_target_index]= [self.iwishndVector(self.filter_model['priorExtent1'],self.filter_model['priorExtent2']) for i in range(numParticles)]
+            
+        drivingNoiseVariance = pow(self.filter_model['accelerationDeviation'],2)
+        survivalProbability = self.filter_model['survivalProbability']
+        degreeFreedomPrediction = self.filter_model['degreeFreedomPrediction']
+
+        # initialize currentExistences
+        currentAlive = [i*np.exp(-self.filter_model['meanMeasurements']) for i in newExistences]
+        currentDead = [1-i for i in newExistences]
+        currentExistences = [currentAlive_i/(currentDead_i+currentAlive_i) for currentAlive_i, currentDead_i in zip(currentAlive, currentDead)]
+       
+        # initialize currentParticlesKinematic and currentparticleExtent
+        currentParticlesKinematic=newParticleKinematic
+        currentparticleExtent=newParticleExtent
+
+        return currentParticlesKinematic,currentExistences,currentParticlesExtent
+
+    def belief_propagation():
+
         weightsExtrinsic = np.nan((numParticles,numMeasurements,numLegacy))
         weightsExtrinsicNew = np.nan(numParticles,numMeasurements,len(newIndexes))
         
@@ -369,7 +451,7 @@ class SPA_Filter:
                 inputDA = np.ones(2,numLegacy)
                 for target in range(numLegacy):
                     if outer == 1:
-                        likelihood1[measurement][target] = constantFactor * np.exp(self.getLogWeightsFast(measurements[measurement],currentParticlesKinematic[target][:2],self.getSquare2Fast(currentParticlesExtent[target]) + self.filter_model['measurementsCovariance'])))
+                        likelihood1[measurement][target] = constantFactor * np.exp(self.getLogWeightsFast(measurements[measurement],currentParticlesKinematic[target][:2],self.getSquare2Fast(currentParticlesExtent[target]) + self.filter_model['measurementsCovariance']))
                         inputDA[1][target] = currentExistencesExtrinsic[target][measurement] * np.mean(likelihood1[measurement][target])
                     else:
                         inputDA[1][target]= currentExistencesExtrinsic[target][measurement]* weightsExtrinsic[target][measurement]*likelihood1[target][measurement]
@@ -398,55 +480,57 @@ class SPA_Filter:
                             inputDA[1][targetIndex] = 1 - currentExistencesExtrinsic[targetIndex][measurement]
 
              targetIndexes[measurement] = targetIndexesCurrent   
-             outputDA{measurement} = dataAssociationBP(inputDA);               
+             outputDA{measurement} = dataAssociationBP(inputDA);   
+
+    def update(self, Z_k, currentParticlesKinematic,currentExistences,currentParticlesExtent):
+        likelihood1, likelihoodNew1 = self.belief_propagation()
+        # perform update step for legacy targets
+        for target in range(numLegacy):
+            weights = np.zeros(len(currentParticlesKinematic),numMeasurements)
+            for measurement in range(numMeasurements):
+                currentWeights = 1 + likelihood1[measurement][target] * outputDA{measurement}(1,target)
+                currentWeights = np.log(currentWeights)
+                weights[measurement] = currentWeights
             
-            # perform update step for legacy targets
-            for target in range(numLegacy):
-                weights = np.zeros(len(currentParticlesKinematic),numMeasurements)
+            # calculate extrinsic information for legacy targets (at all except last iteration) and belief (at last iteration)
+            if outer != self.filter_model['numOuterIterations']:
                 for measurement in range(numMeasurements):
-                    currentWeights = 1 + likelihood1[measurement][target] * outputDA{measurement}(1,target)
-                    currentWeights = np.log(currentWeights)
-                    weights[measurement] = currentWeights
-                
-                # calculate extrinsic information for legacy targets (at all except last iteration) and belief (at last iteration)
-                if outer != self.filter_model['numOuterIterations']:
-                    for measurement in range(numMeasurements):
-                        weightsExtrinsic[measurement][target],currentExistencesExtrinsic[target][measurement] = self.getWeightsUnknown(weights,currentExistences[target],measurement)
-                else:
-                    currentParticlesKinematic[target],currentParticlesExtent[target],currentExistences[target] = self.updateParticles(currentParticlesKinematic[target],currentParticlesExtent[target],currentExistences[target],weights)
-            
-            # perform update step for new targets
-            targetIndex = numLegacy
-            #for target = numMeasurements:-1:1
-            for target in range(numMeasurements):
-                if target in newIndexes:
-                    targetIndex = targetIndex + 1
-                    weights = np.zeros((len(currentParticlesKinematic),numMeasurements+1))
-                    weights[numMeasurements+1] = newWeights[targetIndex-numLegacy]
-                    for measurement in range(target):
-                        outputTmpDA = outputDA{measurement}(1,targetIndexes{measurement}==target)
-                        
-                        if(~isinf(outputTmpDA))
-                            currentWeights = likelihoodNew1(:,measurement,targetIndex-numLegacy) * outputTmpDA;
-                        else
-                            currentWeights = likelihoodNew1(:,measurement,targetIndex-numLegacy);
-                        end
-                        
-                        if(measurement ~= target)
-                            currentWeights = currentWeights + 1;
-                        end
-                        currentWeights = log(currentWeights);
-                        weights(:,measurement) = currentWeights;
+                    weightsExtrinsic[measurement][target],currentExistencesExtrinsic[target][measurement] = self.getWeightsUnknown(weights,currentExistences[target],measurement)
+            else:
+                currentParticlesKinematic[target],currentParticlesExtent[target],currentExistences[target] = self.updateParticles(currentParticlesKinematic[target],currentParticlesExtent[target],currentExistences[target],weights)
+        
+        # perform update step for new targets
+        targetIndex = numLegacy
+        #for target = numMeasurements:-1:1
+        for target in range(numMeasurements):
+            if target in newIndexes:
+                targetIndex = targetIndex + 1
+                weights = np.zeros((len(currentParticlesKinematic),numMeasurements+1))
+                weights[numMeasurements+1] = newWeights[targetIndex-numLegacy]
+                for measurement in range(target):
+                    outputTmpDA = outputDA{measurement}(1,targetIndexes{measurement}==target)
+                    
+                    if(~isinf(outputTmpDA))
+                        currentWeights = likelihoodNew1(:,measurement,targetIndex-numLegacy) * outputTmpDA;
+                    else
+                        currentWeights = likelihoodNew1(:,measurement,targetIndex-numLegacy);
                     end
                     
-                    # calculate extrinsic information for new targets (at all except last iteration) or belief (at last iteration)
-                    if(outer ~= numOuterIterations)
-                        for measurement = 1:target
-                            [weightsExtrinsicNew(:,measurement,targetIndex-numLegacy),currentExistencesExtrinsic(targetIndex,measurement)] = getWeightsUnknown(weights,currentExistences(targetIndex),measurement);
-                        end
-                    else
-                        [currentParticlesKinematic(1:2,:,targetIndex),currentParticlesExtent(:,:,:,targetIndex),currentExistences(targetIndex)] = updateParticles(currentParticlesKinematic(1:2,:,targetIndex),currentParticlesExtent(:,:,:,targetIndex),currentExistences(targetIndex),weights,parameters);
-                        currentParticlesKinematic(3:4,:,targetIndex) = mvnrnd([0;0],priorVelocityCovariance,numParticles)';
+                    if(measurement ~= target)
+                        currentWeights = currentWeights + 1;
+                    end
+                    currentWeights = log(currentWeights);
+                    weights(:,measurement) = currentWeights;
+                end
+                
+                # calculate extrinsic information for new targets (at all except last iteration) or belief (at last iteration)
+                if(outer ~= numOuterIterations)
+                    for measurement = 1:target
+                        [weightsExtrinsicNew(:,measurement,targetIndex-numLegacy),currentExistencesExtrinsic(targetIndex,measurement)] = getWeightsUnknown(weights,currentExistences(targetIndex),measurement);
+                    end
+                else
+                    [currentParticlesKinematic(1:2,:,targetIndex),currentParticlesExtent(:,:,:,targetIndex),currentExistences(targetIndex)] = updateParticles(currentParticlesKinematic(1:2,:,targetIndex),currentParticlesExtent(:,:,:,targetIndex),currentExistences(targetIndex),weights,parameters);
+                    currentParticlesKinematic(3:4,:,targetIndex) = mvnrnd([0;0],priorVelocityCovariance,numParticles)';
 
         
         # perform pruning
@@ -458,5 +542,5 @@ class SPA_Filter:
 
         currentParticlesKinematic = currentParticlesKinematic(:,:,~isRedundant);
         currentParticlesExtent = currentParticlesExtent(:,:,:,~isRedundant);
-        currentLabels = currentLabels(:,~isRedundant);
         currentExistences = currentExistences(~isRedundant);
+        return currentParticleKinematic, currentExistences, currentParticlesExtent

@@ -29,7 +29,7 @@ estimates = cell(numSteps,1);
 currentLabels = zeros(2,0);
 currentParticlesKinematic = zeros(4,numParticles,0); % the the dimmention of the kinematic state is four, x, y and velocity along x and y.
 currentExistences = zeros(0,1);
-currentParticlesExtent = zeros(2,2,numParticles,0); % the extent has the dimention 2x2
+currentParticlesExtent = zeros(2,2,numParticles,0);
 
 for step = 1:numSteps
     step
@@ -37,6 +37,7 @@ for step = 1:numSteps
     % load current measurements
     measurements = measurementsCell{step};
     numMeasurements = size(measurements,2);
+    
     
     % perform prediction step
     [currentParticlesKinematic,currentExistences,currentParticlesExtent] = performPrediction(currentParticlesKinematic,currentExistences,currentParticlesExtent,scanTime,parameters);    
@@ -59,7 +60,7 @@ for step = 1:numSteps
     newParticlesExtent = zeros(2,2,numParticles,numNew);
     newWeights = zeros(numParticles,numNew);
     for target = 1:numNew
-        proposalMean = measurements(:,newIndexes(target)); % read out the state variables
+        proposalMean = measurements(:,newIndexes(target));
         proposalCovariance = 2 * totalCovariance; % strech covariance matrix to make proposal distribution heavier-tailed than target distribution
         
         newParticlesKinematic(1:2,:,target) = proposalMean + sqrtm(proposalCovariance) * randn(2,numParticles);

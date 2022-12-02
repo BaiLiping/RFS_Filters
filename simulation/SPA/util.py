@@ -177,9 +177,27 @@ def gen_filter_model():
     filter_model['numOuterIterations'] = 2
 
     filter_model['surveillanceRegion'] = [[0, 300] [0, 300]]
-    filter_model['measurementVariance'] = filter_model['measurementVariance'] * np.eye( 2 )
+    filter_model['measurementsCovariance'] = filter_model['measurementVariance'] * np.eye( 2 )
     filter_model['areaSize'] = (filter_model['surveillanceRegion'][1][0] - filter_model['surveillanceRegion'][0][0]) * (filter_model['surveillanceRegion'][1][1] - filter_model['surveillanceRegion'][0][1])
     filter_model['constantFactor'] = filter_model['areaSize'] * ( filter_model['meanMeasurements'] / filter_model['meanClutter'] )
+    filter_model['uniformWeight'] = np.log(1/filter_model['areaSize'])
+
+    T=1
+    # construct transition matrix
+    A=np.eye(4)
+    A[0][2]=T
+    A[1][3]=T
+    W=np.zeros((2,4))
+    W[0][0]=0.5*pow(T,2)
+    W[1][1]=0.5*pow(T,2)
+    W[2][0]=T
+    W[3][1]=T
+
+    filter_model['A']=A
+    filter_model['W']=W
+
+    filter_model['totalCovariance'] = (parameters.priorExtent1/(parameters.priorExtent2-3))^2^2+filter_model['measurementsCovariance']
+
 
     filter_model['F_k'] = np.eye(4, dtype=np.float64)
     I = T*np.eye(2, dtype=np.float64)
