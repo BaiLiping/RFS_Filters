@@ -223,8 +223,6 @@ class SPA_Filter:
     def getPromisingNewTarget(self, currentParticlesKinematicTmp, currentExistencesTmp, measurements):
         numMeasurements = len(measurements)
         numParticles = len(currentParticlesKinematicTmp)
-
-        
         probabilitiesNew = np.ones(numMeasurements)
         for measurement in range(numMeasurements):
             numTargets = len(currentParticlesKinematicTmp)
@@ -232,14 +230,14 @@ class SPA_Filter:
             inputDA = np.ones((2, numTargets))
             likelihoods = np.zeros( numParticles, numTargets )
             for target in range(numTargets):
-                likelihoods[target] = constantFactor .* exp( getLogWeightsFast( measurements( :, measurement ), currentParticlesKinematicTmp( 1:2, :, target ), getSquare2Fast( currentParticlesExtentTmp( :, :, :, target ) ) + repmat( measurementsCovariance, [ 1, 1, numParticles ] ) ) );
-                inputDA( 2, target ) = np.mean(likelihoods[target])
-                inputDA( :, target ) = currentExistencesTmp[target] * inputDA( :, target ) + ( 1 - currentExistencesTmp( target ) ) * [ 1;0 ]
+                likelihoods[target] = [self.filter_model['constantFactor'] * np.exp(self.getLogWeightsFast(measurements[measurement], currentParticlesKinematicTmp[target][:2], self.getSquare2Fast(currentParticlesExtentTmp[target])) +  self.filter_model['measurementsCovariance'] for i in range(numParticles)]
+                inputDA[1][target]= np.mean(likelihoods[target])
+                inputDA[target] = currentExistencesTmp[target] * inputDA( :, target ) + ( 1 - currentExistencesTmp( target ) ) * [ 1;0 ]
         
             inputDA = inputDA( 2, : ) ./ inputDA( 1, : )
             sumInputDA = 1 + sum( inputDA, 2 )
             outputDA = 1 ./ ( repmat( sumInputDA, [ 1, numTargets ] ) - inputDA )
-            probabilitiesNew( measurement ) = 1 ./ sumInputDA
+            probabilitiesNew[measurement]= 1/sumInputDA 
                 
             for target in range(numTargets):
                 logWeights = np.log(np.ones( numParticles) + likelihoods( :, target) * outputDA( 1, target ))
