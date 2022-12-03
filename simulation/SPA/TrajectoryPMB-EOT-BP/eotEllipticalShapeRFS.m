@@ -54,9 +54,9 @@ for step = 1:numSteps
 
     % estimates
     detectedTargets = 0;
-    estimates{step}.wp = [];
-    estimates{step}.xp = [];
-    estimates{step}.ep = [];
+    estimates{step}.wp = []; % weight at iteration p
+    estimates{step}.xp = []; % kinematic state at iteration p
+    estimates{step}.ep = []; % extent at iteration p
     estimates{step}.state = zeros(4,0);
     estimates{step}.extent = zeros(2,2,0);
     estimates{step}.label = zeros(2,0);

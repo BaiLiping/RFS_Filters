@@ -314,57 +314,33 @@ class SPA_Filter:
 
         return a
 
-    def performPrediction(self, oldParticles, oldExistences, oldExtents):
+    def dataAssociationBP(inputDA):
         '''
-        function [newParticles, newExistences, newExtents] = performPrediction( oldParticles, oldExistences, oldExtents, scanTime, parameters )
-        [~,numParticles,numTargets] = size(oldParticles);
-        drivingNoiseVariance = parameters.accelerationDeviation^2;
-        survivalProbability = parameters.survivalProbability;
-        degreeFreedomPrediction = parameters.degreeFreedomPrediction;
-        
-        [A, W] = getTransitionMatrices(scanTime);
-        newParticles = oldParticles;
-        newExistences = oldExistences;
-        newExtents = oldExtents;
-        
-        for target = 1:numTargets
-            oldExtents(:,:,:,target) = oldExtents(:,:,:,target)/degreeFreedomPrediction;
-            newExtents(:,:,:,target) = wishrndFastVector(oldExtents(:,:,:,target),degreeFreedomPrediction,numParticles);
+        function [outputDA] = dataAssociationBP(inputDA)
+        % perform DA
+        inputDA = inputDA(2,:)./inputDA(1,:);
+        sumInputDA = 1 + sum(inputDA,2);
+        outputDA = 1 ./ (repmat(sumInputDA,[1,size(inputDA,2)]) - inputDA);
+    
+        % make hard DA decision in case outputDA involves NANs
+        if(any(isnan(outputDA)))
+            outputDA = zeros(size(outputDA));
+            [~,index] = max(inputDA(1,:));
+            outputDA(index(1)) = 1;
         end
-        
-        for target = 1:numTargets
-            newParticles(:,:,target) = A*oldParticles(:,:,target) + W*sqrt(drivingNoiseVariance)*randn(2,numParticles);
-            newExistences(target) = survivalProbability*oldExistences(target);
         end
-        
-        end
+        '''
         
 
-        '''
-
-        ~,numParticles,numTargets = oldParticles.shape
+    def predict(self, currentParticlesKinematic, currentParticlesExtent, measurement):
+        numTargets,numParticles,dim = currentParticlesKinematic.shape
         drivingNoiseVariance = pow(self.filter_model['accelerationDeviation'],2)
         survivalProbability = self.filter_model['survivalProbability']
         degreeFreedomPrediction = self.filter_model['degreeFreedomPrediction']
-        # construct transition matrix
-        A=np.eye(4)
-        A[0][2]=self.filter_model['T']
-        A[1][3]=self.filter_model['T']
-
-        W=np.zeros((2,4))
-        W[0][0]=0.5*pow(self.filter_model['T'],2)
-        W[1][1]=0.5*pow(self.filter_model['T'],2)
-        W[2][0]=self.filter_model['T']
-        W[3][1]=self.filter_model['T']
-
-        # waht is the size of the target exactly?
 
         for target_index in range(numTargets):
-            newParticles[target_index]=A*oldParticles[target_index]+W*math.sqrt(drivingNoiseVariance)*np.random.normal(size=(numParticles, 2))
+            currentParticlesKinematic[target_index]=[self.filter_model['A']*i+self.filter_model['W']*math.sqrt(drivingNoiseVariance)*np.random.normal(size=(numParticles, 2)) for i in currentParticlesKinematic[target_index]]
         
-        return newParticles, newExistences, newExtents
-
-    def predict(self, currentParticlesKinematic, currentParticlesExtent, measurement):
         currentAlive = [i*np.exp(-self.filter_model['meanMeasurements']) for i in currentExistences]
         currentDead = [1-i for i in currentExistences]
         currentExistences = [currentAlive_i/(currentDead_i+currentAlive_i) for currentAlive_i, currentDead_i in zip(currentAlive, currentDead)]
@@ -394,7 +370,6 @@ class SPA_Filter:
         
         currentParticlesKinematic = np.hstack(currentParticlesKinematic,newParticlesKinematic)
         currentParticlesExtent = np.hstack(currentParticlesExtent,newParticlesExtent)
-
 
         return currentParticlesKinematic,currentExistences,currentParticlesExtent
 
