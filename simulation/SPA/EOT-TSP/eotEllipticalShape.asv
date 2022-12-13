@@ -83,7 +83,7 @@ for step = 1:numSteps
         % perform one BP message passing iteration for each measurement
         outputDA = cell(numMeasurements,1);
         targetIndexes = cell(numMeasurements,1);
-        for measurement = numMeasurements:-1:1 % measurement l
+        for measurement = numMeasurements:-1:1 % measurement l, in reverse order 
             inputDA = ones(2,numLegacy);
             
             for target = 1:numLegacy % numLegacy K underscore target: k

@@ -47,11 +47,13 @@ for step = 1:numSteps
     numTargets = size(currentParticlesKinematic,3);
     numLegacy = numTargets;
     
+    
     % get indexes of promising new objects 
     [newIndexes,measurements] = getPromisingNewTargets(currentParticlesKinematic,currentParticlesExtent,currentExistences,measurements,parameters);
     numNew = size(newIndexes,1);
     currentLabels = cat(2,currentLabels,[step*ones(1,numNew);newIndexes']);
-
+    
+    
     % initialize belief propagation (BP) message passing
     newExistences = repmat(meanBirths * exp(-meanMeasurements)/(meanBirths * exp(-meanMeasurements) + 1),[numNew,1]);
     newParticlesKinematic = zeros(4,numParticles,numNew);
@@ -134,7 +136,8 @@ for step = 1:numSteps
         outputDA{measurement} = dataAssociationBP(inputDA);   
          
         end
-
+        
+        
         % perform update step for legacy targets
         for target = 1:numLegacy
             weights = zeros(size(currentParticlesKinematic,2),numMeasurements);
