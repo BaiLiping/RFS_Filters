@@ -6,4 +6,4 @@ This is the documents from previous project. The previous lab works on moving th
 
 After consulting with legal professionals, I was informed that it is absolutely up to me to make the work available since everything is in public domain. If Liu Jianan you have any issue with this, contact me directly. 
 
-While I understand that English speaking Chinese take advantage of the information differential, but the fact that people actually listened to that moron is still beyond me. For those of people who tried to do research, just use your own brain and do some search yourself. The code are widely available already. 
+While I understand that English speaking Chinese take advantage of the information differential, the fact that people actually listened to that moron is still beyond me. For those who tried to do research, just use your own brain and do some search yourself. The code are widely available already. 
