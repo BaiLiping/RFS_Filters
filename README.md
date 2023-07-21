@@ -6,6 +6,4 @@ This document contains information from a previous project. The previous lab foc
 
 While I understand that English-speaking Chinese guys may exploit information differentials, the fact that people actually listened to that person is still beyond my comprehension. For those conducting research, I encourage you to use your own intellect and conduct your own searches, as the code is already widely available.
 
-The quality of the whole thing shock me to the core. 
-
 After consulting with legal professionals, I was informed that it is entirely up to me to make this work available since everything is in the public domain. If Liu Jianan has any issues with this, please feel free to contact me directly.
