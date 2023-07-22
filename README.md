@@ -3,7 +3,3 @@
 
 
 This document contains information from a previous project. The previous lab focused on adapting ideas from top-tier papers to lesser-tier papers, specifically aiming to apply concepts from radar signal processing and point data processing to the realm of intelligent vehicles. All the code has been converted from MATLAB code used in Yuxuan Xia's lab to Python.
-
-In my opinion, this kind of projects are far away from real research.
-
-After consulting with legal professionals, I was informed that it is entirely up to me to make this work available since everything is in the public domain. If Liu Jianan has any issues with this, I can deal with you directly.
