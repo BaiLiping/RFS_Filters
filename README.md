@@ -1,7 +1,4 @@
-There are a lot of errors in this set of code, as none of the people involved in this project were professionals in this field. 
-- for instance, the dynamics model is based on the derivation on page 273 of Estimation with Application to Tracking and Navigation. It is the Discrete White Noise Acceleration Model. However, this model is not used for the update.
-- There are many many such errors.
-- I decided to leave it as is for those who eventually find their way here.
+There are a lot of errors in this set of code, as none of the people involved in this project were professionals in this field. I decided to leave it as is for those who eventually find their way here.
 
 All the code has been converted from MATLAB code used in Yuxuan Xia's lab to Python, and plenty of open source implementations are available. If you want the original Matlab Version, just search for Yuxuan Xia.
 
