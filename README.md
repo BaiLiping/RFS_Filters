@@ -4,7 +4,7 @@ All the code has been converted from MATLAB, and plenty of open source implement
 
 RFS is an elegant mathematical framework that incorporates the set cardinality dynamics into the propagation process; that's it. It can be applied to many existing methods, giving rise to an infinite number of publication possibilities. As an outsider, I find that amusing. 
 
-The PMBM filter is a kitchen-sink approach to things, essentially a Multiple-Hypothesis filter. 
+The PMBM filter is a kitchen-sink approach to things, essentially a Multiple-Hypothesis filter, and the RFS is a wrapper.
 
 
 ![result2](https://github.com/BaiLiping/Multi-Object-Tracking/blob/cd86b4ec3879b8596497308efc759dfebe2571eb/alternating_classification.gif)
