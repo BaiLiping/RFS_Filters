@@ -15,7 +15,7 @@ Random Finite Set (RFS) theory provides an elegant framework that incorporates s
 
 The more interesting element of this set of code is when it is applied to the nuScence dataset. 
 
-The Poisson multi‑Bernoulli mixture (PMBM) filter can be viewed as a kitchen sink approach, wrapping the theoretical framework on established multiple‑hypothesis stuff. 
+The Poisson multi‑Bernoulli mixture (PMBM) filter can be viewed as a kitchen sink approach, wrapping the theoretical framework on established multiple‑hypothesis methods. I feel this field is a good subject to be studied by athropologist.  
 ![result2](https://github.com/BaiLiping/Multi-Object-Tracking/blob/cd86b4ec3879b8596497308efc759dfebe2571eb/alternating_classification.gif)
 ![result](https://github.com/BaiLiping/Multi-Object-Tracking/blob/dd39e86efe79505188fe028c10b6deff9543d2ce/Untitled.png)
 
