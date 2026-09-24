@@ -7,7 +7,7 @@ The project page organizes the methods, archived validation results, failure ana
 
 ---
 
-This codebase contains many errors; none of the contributors were professionals in this field. I have left the code as is for those who eventually find their way here.
+This codebase contains many errors. I have left the code as is for those who eventually find their way here.
 
 The code was converted from MATLAB, and there are numerous open‑source implementations available. For the original MATLAB version by Ángel García‑Fernández, see: https://github.com/Agarciafernandez/MTT
 
