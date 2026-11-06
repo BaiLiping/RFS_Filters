@@ -7,8 +7,6 @@ The project page organizes the methods, archived validation results, failure ana
 
 ---
 
-This codebase contains many errors. I have left the code as is for those who eventually find their way here.
-
 The code was converted from MATLAB, and there are numerous open‑source implementations available. For the original MATLAB version by Ángel García‑Fernández, see: https://github.com/Agarciafernandez/MTT
 
 Random Finite Set (RFS) theory provides an elegant framework that incorporates set‑cardinality dynamics into the propagation process. It can be applied to many existing methods, which has led to a large number of publications. 
